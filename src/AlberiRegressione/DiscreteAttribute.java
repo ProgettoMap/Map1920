@@ -23,7 +23,7 @@ public class DiscreteAttribute extends Attribute {
 
 	/**
 	 * 
-	 * @return Cardinalit� dell'array values (numero di valori discreti)
+	 * @return Cardinalita' dell'array values (numero di valori discreti)
 	 */
 	int getNumberOfDistinctValues() {
 		return values.length;
