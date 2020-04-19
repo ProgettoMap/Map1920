@@ -3,7 +3,7 @@
  */
 public class DiscreteAttribute extends Attribute {
 
-	// Rappresenta l'insieme di valori che l'attributo pu� assumere
+	// Rappresenta l'insieme di valori discreti che l'attributo può assumere
 	String values[];
 
 	/**
@@ -20,17 +20,17 @@ public class DiscreteAttribute extends Attribute {
 
 	/**
 	 * 
-	 * @return Conta i valori discreti
+	 * @return Cardinalità dell'array values (numero di valori discreti)
 	 */
 	int getNumberOfDistinctValues() {
 		return values.length();
 	}
 
 	/**
-	 * Indice di un valore discreto
-	 * 
+	 * Metodo che prende in input un indice i 
+	 * di  un solo valore discreto 
 	 * @param i
-	 * @return I-esimo valore discreto
+	 * @return i-esimo valore discreto dell'array values[]
 	 */
 	String getValue(int i) {
 
