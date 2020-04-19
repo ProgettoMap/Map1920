@@ -5,8 +5,7 @@
 public class ContinuousAttribute extends Attribute {
 
 	/**
-	 * Comportamento :Invoca il costruttore della super-classe Input: valori per
-	 * nome simbolico dell'attributo, identificativo numerico dell'attributo
+	 * Invoca il costruttore della super-classe
 	 * 
 	 * @param name
 	 * @param index

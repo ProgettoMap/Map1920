@@ -4,8 +4,8 @@
 	 */
 public abstract class Attribute {
 	
-	String name;
-	int index;	
+	String name; // Nome simbolico dell'attributo
+	int index;	// Identificativo numerico dell'attributo
 	
 	/**
 	 *  E' il costruttore di classe. Inizializza i valori dei membri  name,  index
