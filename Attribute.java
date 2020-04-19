@@ -4,7 +4,9 @@
 	 */
 public abstract class Attribute {
 	
+
 	String name; // Nome simbolico dell'attributo
+
 	int index;	// Identificativo numerico dell'attributo
 	
 	/**
