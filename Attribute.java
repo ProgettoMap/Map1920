@@ -4,8 +4,8 @@
 	 */
 public abstract class Attribute {
 	
-	String name;
-	int index;	
+	String name; // nome simbolico dell'attributo
+	int index;	// Identificativo numerico dell'attributo
 	
 	/**
 	 *  E' il costruttore di classe. Inizializza i valori dei membri  name,  index
@@ -19,7 +19,7 @@ public abstract class Attribute {
 		
 	}
 	/**
-	 * Restituisce il valore nel membro name;
+	 * Restituisce il nome simbolico dell'attributo
 	 * @return name
 	 */
 	String getName() {
