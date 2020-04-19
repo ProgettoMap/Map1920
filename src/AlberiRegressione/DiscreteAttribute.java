@@ -23,7 +23,7 @@ public class DiscreteAttribute extends Attribute {
 
 	/**
 	 * 
-	 * @return Cardinalità dell'array values (numero di valori discreti)
+	 * @return Cardinalit� dell'array values (numero di valori discreti)
 	 */
 	int getNumberOfDistinctValues() {
 		return values.length;
@@ -41,4 +41,14 @@ public class DiscreteAttribute extends Attribute {
 
 	}
 
+	@Override
+	public String toString() {
+
+		String values_concat = "";
+		for (String s : values) {
+			values_concat += s + " ";
+		}
+		return values_concat;
+
+	}
 }

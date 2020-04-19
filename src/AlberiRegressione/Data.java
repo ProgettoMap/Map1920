@@ -13,7 +13,7 @@ public class Data {
 	// Matrice nXm di tipo Object che contiene il training set organizzato come
 	// numberOfExamples X numberAttribute
 	private Object data[][];
-	// Cardinalità del training set
+	// CardinalitÃ  del training set
 	private int numberOfExamples;
 	// Array di oggetti di tipo Attribute per rappresentare gli attributi
 	// indipendenti di tipo discreto
@@ -75,8 +75,8 @@ public class Data {
 	}
 
 	/**
-	 * Metodo che restituisce la cardinalità del traning set in osservazione
-	 * 
+	 * Metodo che restituisce la cardinalitÃ  del traning set in osservazione
+	 *
 	 * @return getNumberOfExamples
 	 */
 	int getNumberOfExamples() {
@@ -84,8 +84,8 @@ public class Data {
 	}
 
 	/**
-	 * Metodo che restituisce la cardinalità degli attributi indipendenti
-	 * 
+	 * Metodo che restituisce la cardinalitÃ  degli attributi indipendenti
+	 *
 	 * @return length dell'array explanatorySet
 	 */
 	int getNumberOfExplanatoryAttributes() {
@@ -95,7 +95,7 @@ public class Data {
 	/**
 	 * Metodo che prende in input un indice della matrice data[][] e fornisce in
 	 * output
-	 * 
+	 *
 	 * @param exampleIndex
 	 * @return
 	 */
@@ -106,7 +106,7 @@ public class Data {
 	/**
 	 * Restituisce il valore dell'attributo indicizzato da attributeIndex per
 	 * l'esempio exampleIndex
-	 * 
+	 *
 	 * @return data[exampleIndex][attributeIndex]
 	 */
 
@@ -126,12 +126,19 @@ public class Data {
 
 	}
 
-	void sort(Attribute attribute, int beginExampleIndex, int endExampleIndex) {
-
+	/**
+	 * Ordina il sottoinsieme di esempi compresi nell'intervallo [beginExampleIndex, endExampleIndex]
+	 * in data[][] rispetto allo specifico attributo attribute.
+	 *
+	 * @param attribute Attributo i cui valori devono essere ordinati
+	 * @param beginExampleIndex
+	 * @param endExampleIndex
+	 */
+	private void sort(Attribute attribute, int beginExampleIndex, int endExampleIndex) {
 		quicksort(attribute, beginExampleIndex, endExampleIndex);
 	}
 
-	// scambio esempio i con esempi con j
+	// scambio esempio i con esempio j
 	private void swap(int i, int j) {
 		Object temp;
 		for (int k = 0; k < getNumberOfExplanatoryAttributes() + 1; k++) {
@@ -176,12 +183,12 @@ public class Data {
 	/*
 	 * Algoritmo quicksort per l'ordinamento di un array di interi A usando come
 	 * relazione d'ordine totale "<="
-	 * 
+	 *
 	 * @param A
 	 */
 	private void quicksort(Attribute attribute, int inf, int sup) {
 
-		if (sup >= inf) {
+		if (inf <= sup) {
 
 			int pos;
 
@@ -199,17 +206,38 @@ public class Data {
 
 	}
 
+	/**
+	 * Restituisce l'attributo indicizzato da index in explanatorySet[]
+	 *
+	 * @param index Indice nell'array explanatorySet[] per uno specifico attributo
+	 *              indipendente
+	 * @return oggetto Attribute indicizzato da index
+	 */
+	private Attribute getExplanatoryAttribute(int index) {
+		return explanatorySet[index];
+	}
+
+	/**
+	 * @return Oggetto corrispondente all'attributo di classe
+	 */
+	private ContinuousAttribute getClassAttribute() {
+		return classAttribute;
+	}
+
+	/**
+	 * Consente il test delle classi implementate, in particolare permette la stampa degli
+	 * esempi ordinati per valori di attributo
+	 */
 	public static void main(String args[]) throws FileNotFoundException {
 		Data trainingSet = new Data("servo.dat");
 		System.out.println(trainingSet);
-
+		
 		for (int jColumn = 0; jColumn < trainingSet.getNumberOfExplanatoryAttributes(); jColumn++) {
-			System.out.println("ORDER BY " + trainingSet.getExplanatoryAttribute(jColumn));
+			System.out.println("ORDER BY " + trainingSet.getExplanatoryAttribute(jColumn).toString());
 			trainingSet.quicksort(trainingSet.getExplanatoryAttribute(jColumn), 0,
 					trainingSet.getNumberOfExamples() - 1);
 			System.out.println(trainingSet);
 		}
 
 	}
-
 }

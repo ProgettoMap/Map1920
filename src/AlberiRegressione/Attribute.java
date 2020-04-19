@@ -1,4 +1,5 @@
 package AlberiRegressione;
+
 	/**
 	 * La classe modella un generico attributo discreto o continuo. 
 	 * 
@@ -21,6 +22,7 @@ public abstract class Attribute {
 		this.name=name;		
 		
 	}
+	
 	/**
 	 * Restituisce il valore nel membro name;
 	 * @return name
@@ -36,5 +38,6 @@ public abstract class Attribute {
 	int getIndex() {
 		return index;
 	}
+	
 	
 }
