@@ -1,3 +1,5 @@
+package AlberiRegressione;
+
 /**
  * Rappresenta un attributo discreto
  */
@@ -15,7 +17,8 @@ public class DiscreteAttribute extends Attribute {
 	 * @param values Valori discreti
 	 */
 	DiscreteAttribute(String name, int index, String[] values) {
-		super(name, index, values);
+		super(name, index);
+		this.values = values;
 	}
 
 	/**
@@ -23,12 +26,12 @@ public class DiscreteAttribute extends Attribute {
 	 * @return Cardinalità dell'array values (numero di valori discreti)
 	 */
 	int getNumberOfDistinctValues() {
-		return values.length();
+		return values.length;
 	}
 
 	/**
-	 * Metodo che prende in input un indice i 
-	 * di  un solo valore discreto 
+	 * Metodo che prende in input un indice i di un solo valore discreto
+	 * 
 	 * @param i
 	 * @return i-esimo valore discreto dell'array values[]
 	 */
