@@ -1,5 +1,3 @@
-package AlberiRegressione;
-
 	/**
 	 * La classe modella un generico attributo discreto o continuo. 
 	 * 

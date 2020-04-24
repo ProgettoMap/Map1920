@@ -1,5 +1,3 @@
-package AlberiRegressione;
-
 /**
  * Rappresenta un attributo discreto
  */
