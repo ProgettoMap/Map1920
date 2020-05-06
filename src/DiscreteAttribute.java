@@ -1,6 +1,7 @@
 /**
  * Rappresenta un attributo discreto
  */
+//NOTE: Attributi nominali (es. A, B, C...)
 public class DiscreteAttribute extends Attribute {
 
 	// Rappresenta l'insieme di valori discreti che l'attributo può assumere

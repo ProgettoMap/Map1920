@@ -6,16 +6,18 @@ import java.util.Scanner;
  * Modella l'insieme di esempi di training
  */
 
+
 public class Data {
 
 	// Matrice nXm di tipo Object che contiene il training set organizzato come
 	// numberOfExamples X numberAttribute
 	private Object data[][];
-	// CardinalitÃ  del training set
+	// Cardinalita'  del training set
 	private int numberOfExamples;
 	// Array di oggetti di tipo Attribute per rappresentare gli attributi
 	// indipendenti di tipo discreto
-	private Attribute explanatorySet[];
+	//NOTE: E' la riga letta nel traning set nel formato Attribute es motor A,B,C,D,E
+	private Attribute explanatorySet[]; 
 	// Oggetto per modellare l'attributo di classe Attributo
 	private ContinuousAttribute classAttribute;
 
@@ -48,9 +50,9 @@ public class Data {
 
 			iAttribute++;
 			line = sc.nextLine();
-
+			
 		}
-
+		
 		// avvalorare numero di esempi
 		// @data 167
 		numberOfExamples = new Integer(line.split(" ")[1]);
@@ -73,7 +75,7 @@ public class Data {
 	}
 
 	/**
-	 * Metodo che restituisce la cardinalitÃ  del traning set in osservazione
+	 * Metodo che restituisce la cardinalita'  del traning set in osservazione
 	 *
 	 * @return getNumberOfExamples
 	 */
@@ -82,7 +84,7 @@ public class Data {
 	}
 
 	/**
-	 * Metodo che restituisce la cardinalitÃ  degli attributi indipendenti
+	 * Metodo che restituisce la cardinalita'  degli attributi indipendenti
 	 *
 	 * @return length dell'array explanatorySet
 	 */
@@ -132,7 +134,7 @@ public class Data {
 	 * @param beginExampleIndex
 	 * @param endExampleIndex
 	 */
-	private void sort(Attribute attribute, int beginExampleIndex, int endExampleIndex) {
+	void sort(Attribute attribute, int beginExampleIndex, int endExampleIndex) {
 		quicksort(attribute, beginExampleIndex, endExampleIndex);
 	}
 

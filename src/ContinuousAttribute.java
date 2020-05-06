@@ -2,6 +2,7 @@
  * Estende la classe Attribute e rappresenta un attributo continuo
  *
  */
+//NOTE: Attributi numerici (es. 1,3,5...)
 public class ContinuousAttribute extends Attribute {
 
 	/**

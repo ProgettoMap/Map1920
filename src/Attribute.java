@@ -2,19 +2,18 @@
 	 * La classe modella un generico attributo discreto o continuo. 
 	 * 
 	 */
-public abstract class Attribute {
+abstract class Attribute {
 	
 
-	String name; // Nome simbolico dell'attributo
-
-	int index;	// Identificativo numerico dell'attributo
+	private String name; // Nome simbolico dell'attributo
+	private int index;	// Identificativo numerico dell'attributo
 	
 	/**
 	 *  E' il costruttore di classe. Inizializza i valori dei membri  name,  index
 	 * @param name
 	 * @param index
 	 */
-	public Attribute(String name,int index) {
+	 Attribute(String name,int index) {
 
 		this.index=index;
 		this.name=name;		
