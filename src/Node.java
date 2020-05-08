@@ -8,7 +8,7 @@ abstract class Node {
     private int endExampleIndex; // indice nell'array del training set dell'ultimo //esempio coperto dal nodo
     // corrente. beginExampleIndex e endExampleIndex individuano //un sotto-insieme
     // di training.
-    private double variance; // valore della varianza calcolata, rispetto all'attributo di classe, nel
+    private double variance; // valore dello SSE calcolato, rispetto all'attributo di classe, nel
     // sotto-insieme di training del nodo
 
     /**
@@ -26,74 +26,66 @@ abstract class Node {
     Node(Data trainingSet, int beginExampleIndex, int endExampleIndex) {
 	this.beginExampleIndex = beginExampleIndex;
 	this.endExampleIndex = endExampleIndex;
+	
+	//TODO: incrementare idNode
+	//idNodeCount++;
+	//this.idNode = idNodeCount;
+	
     }
 
-    //TODO: completare commenti
     /**
-     *
-     * Input: // Output: identificativo numerico del nodo Comportamento: Restituisce
-     * il valore del membro idNode
+     * Restituisce il valore dell'attributo idNode
      * 
-     * @return
+     * @return int - identificativo numerico del nodo
      */
     int getIdNode() {
 	return idNode;
     }
 
-    //TODO: completare commenti
     /**
-     * Input: // Output: indice del primo (ultimo) esempio del sotto-insieme
-     * rispetto al training set complessivo Comportamento: Restituisce il valore del
-     * membro beginExampleIndex (endExampleIndex)
+     * Restituisce il valore dell'attributo beginExampleIndex
      * 
-     * @return
+     * @return int - indice del primo esempio del sotto-insieme rispetto al training
+     *         set complessivo
      */
     int getBeginExampleIndex() {
 	return beginExampleIndex;
     }
 
-    //TODO: completare commenti
     /**
+     * Restituisce il valore dell'attributo endExampleIndex
      * 
-     * @return
+     * @return int - indice dell'ultimo esempio del sotto-insieme rispetto al training
+     *         set complessivo
      */
     int getEndExampleIndex() {
 	return endExampleIndex;
     }
 
-    //TODO: completare commenti
     /**
-     * Input: // Output: valore della varianza dell’attributo da predire rispetto al
-     * nodo corrente Comportamento: Restituisce il valore del membro variance
+     * Restituisce il valore dell'attributo variance
      * 
-     * 
-     * @return
+     * @return double - valore dello SSE dell’attributo da predire rispetto al nodo corrente 
      */
     double getVariance() {
 	return variance;
     }
 
-    //TODO: completare commenti
     /**
-     * Input: // Output: valore del numero di nodi sottostanti Comportamento:E' un
-     * metodo astratto la cui implementazione riguarda i nodi di tipo test (split
+     * Metodo astratto la cui implementazione riguarda i nodi di tipo test (split
      * node) dai quali si possono generare figli, uno per ogni split prodotto.
-     * Restituisce il numero di tali nodi figli
      * 
-     * @return
+     * @return int - Numero di nodi figli
      */
     abstract int getNumberOfChildren();
 
-    //TODO: completare commenti
     /**
-     * Input: // Comportamento: Concatena in un oggetto String i valori di
-     * beginExampleIndex,endExampleIndex, variance e restituisce la stringa finale.
-     * 
+     * Concatena in un oggetto String i valori di beginExampleIndex,
+     * endExampleIndex, variance e restituisce la stringa finale.
      * 
      */
     public String toString() {
-	return ("Esempio primo nodo: " + beginExampleIndex + ". Esempio ultimo nodo: " + endExampleIndex + ". "
-		+ "Valore della varianza:" + variance);
+	return ("[Examples: " + beginExampleIndex + "-" + endExampleIndex + "] variance:" + variance);
     }
 
 }

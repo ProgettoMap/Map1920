@@ -93,11 +93,10 @@ public class Data {
 	}
 
 	/**
-	 * Metodo che prende in input un indice della matrice data[][] e fornisce in
-	 * output
-	 *
-	 * @param exampleIndex
-	 * @return
+	 * Restituisce il valore dell'attributo di classe per l'esempio exampleIndex 
+	 * 
+	 * @param int exampleIndex - indice di riga per la matrice data[][] per uno specifico esempio 
+	 * @return double - valore dell'attributo di classe per l'esempio indicizzato in input 
 	 */
 	public Double getClassValue(int exampleIndex) {
 		return (Double) data[exampleIndex][classAttribute.getIndex()];

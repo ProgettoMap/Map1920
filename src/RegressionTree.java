@@ -43,7 +43,7 @@ class RegressionTree {
      */
     void learnTree(Data trainingSet, int begin, int end, int numberOfExamplesPerLeaf) {
 	if (isLeaf(trainingSet, begin, end, numberOfExamplesPerLeaf)) {
-	    // determina la classe che compare pi� frequentemente nella partizione corrente
+				//determina la classe che compare più frequentemente nella partizione corrente
 	    root = new LeafNode(trainingSet, begin, end);
 	} else // split node
 	{
@@ -52,9 +52,8 @@ class RegressionTree {
 	    if (root.getNumberOfChildren() > 1) {
 		childTree = new RegressionTree[root.getNumberOfChildren()];
 		for (int i = 0; i < root.getNumberOfChildren(); i++) {
-//						childTree[i]=new RgressionTree();
-		    childTree[i].learnTree(trainingSet, ((SplitNode) root).getSplitInfo(i).beginIndex,
-			    ((SplitNode) root).getSplitInfo(i).endIndex, numberOfExamplesPerLeaf);
+						childTree[i]=new RegressionTree();
+						childTree[i].learnTree(trainingSet, ((SplitNode)root).getSplitInfo(i).beginIndex, ((SplitNode)root).getSplitInfo(i).endIndex, numberOfExamplesPerLeaf);
 		}
 	    } else
 		root = new LeafNode(trainingSet, begin, end);
