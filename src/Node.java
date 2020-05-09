@@ -5,9 +5,9 @@ abstract class Node {
     private int idNode; // identificativo numerico del nodo
     private int beginExampleIndex; // indice nell'array del training set del primo esempio coperto dal nodo
     // corrente
-    private int endExampleIndex; // indice nell'array del training set dell'ultimo //esempio coperto dal nodo
+    private int endExampleIndex; // indice nell'array del training set dell'ultimo esempio coperto dal nodo
     // corrente. beginExampleIndex e endExampleIndex individuano //un sotto-insieme
-    // di training.
+    // di training
     private double variance; // valore dello SSE calcolato, rispetto all'attributo di classe, nel
     // sotto-insieme di training del nodo
 
@@ -26,11 +26,10 @@ abstract class Node {
     Node(Data trainingSet, int beginExampleIndex, int endExampleIndex) {
 	this.beginExampleIndex = beginExampleIndex;
 	this.endExampleIndex = endExampleIndex;
-	
-	//TODO: incrementare idNode
-	//idNodeCount++;
-	//this.idNode = idNodeCount;
-	
+
+	 idNodeCount++;
+	 this.idNode = idNodeCount;
+
     }
 
     /**
@@ -55,8 +54,8 @@ abstract class Node {
     /**
      * Restituisce il valore dell'attributo endExampleIndex
      * 
-     * @return int - indice dell'ultimo esempio del sotto-insieme rispetto al training
-     *         set complessivo
+     * @return int - indice dell'ultimo esempio del sotto-insieme rispetto al
+     *         training set complessivo
      */
     int getEndExampleIndex() {
 	return endExampleIndex;
@@ -65,7 +64,8 @@ abstract class Node {
     /**
      * Restituisce il valore dell'attributo variance
      * 
-     * @return double - valore dello SSE dell’attributo da predire rispetto al nodo corrente 
+     * @return double - valore dello SSE dell’attributo da predire rispetto al nodo
+     *         corrente
      */
     double getVariance() {
 	return variance;

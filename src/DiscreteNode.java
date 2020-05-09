@@ -4,14 +4,13 @@
 class DiscreteNode extends SplitNode {
 
     /**
-     * Input: training set complessivo, indici estremi del sotto-insieme di
-     * training, attributo indipendente sul quale si definisce lo split
      * 
-     * Comportamento: Istanzia un oggetto invocando il costruttore della superclasse
-     * con il parametro attribute
+     * Istanzia un oggetto invocando il costruttore della superclasse con il
+     * parametro attribute
      * 
-     * @param Data      trainingSet
-     * @param int       beginExampelIndex - Indice estremo del sotto-insieme di
+     * @param Data      trainingSet - oggetto di classe Data contenente il training
+     *                  set completo
+     * @param int       beginExampleIndex - Indice estremo del sotto-insieme di
      *                  training
      * @param int       endExampleIndex - Indice estremo del sotto-insieme di
      *                  training
@@ -29,37 +28,34 @@ class DiscreteNode extends SplitNode {
      * porzione di trainingSet compresa tra beginExampleIndex e endExampleIndex),
      * quindi popola l'array mapSplit[] con tali oggetti
      * 
-     * @param Data      trainingSet
-     * @param int       beginExampelIndex - Indice estremo del sotto-insieme di
-     *                  training
-     * @param int       endExampleIndex - Indice estremo del sotto-insieme di
-     *                  training
+     * @param Data      trainingSet - oggetto di classe Data contenente il training
+     *                  set completo
+     * @param int       beginExampleIndex - indice che identifica il sotto-insieme
+     *                  di training coperto dal nodo corrente
+     * @param int       endExampleIndex - indice che identifica il sotto-insieme di
+     *                  training coperto dal nodo corrente
      * @param Attribute attribute - Attributo indipendente sul quale si definisce lo
      *                  split
      * 
      */
     @Override
     void setSplitInfo(Data trainingSet, int beginExampleIndex, int endExampleIndex, Attribute attribute) {
-	// TODO: rivedere
-	SplitNode splitNodeInstance = null;
-
+	SplitInfo[] mapSplitTemp = new SplitInfo[endExampleIndex - beginExampleIndex + 1];
 	for (int i = beginExampleIndex; i < endExampleIndex; i++) {
-	    splitNodeInstance.new SplitInfo(attribute, beginExampleIndex, endExampleIndex, getIdNode());
-
+	    mapSplitTemp[i] = new SplitInfo(attribute, beginExampleIndex, endExampleIndex, getIdNode());
 	}
-
+	mapSplit = mapSplitTemp;
     }
 
-//    private int getNextIndex(int beginExampleIndex, Data trainingSet, Attribute attribute){
-//	    
-//	    trainingSet
-//	    String name = attribute.getName();
-//		int i = beginExampleIndex;
-//		while(name == attribute.getName()) {
-//		    i++;
-//		}
-//		return i;
-//	}
+    private int getNextIndex(Data trainingSet, int beginExampleIndex, Attribute attribute){
+	    
+	    String name = attribute.getName();
+		int i = beginExampleIndex;
+		while(name == attribute.getName()) {
+		    i++;
+		}
+		return i;
+	}
 
     /**
      * (Implementazione da class abstract): effettua il confronto del valore in
@@ -76,7 +72,7 @@ class DiscreteNode extends SplitNode {
      */
     @Override
     int testCondition(Object value) {
-	
+
 	return 0;
     }
 
@@ -85,7 +81,7 @@ class DiscreteNode extends SplitNode {
      */
     @Override
     public String toString() {
-	return "DISCRETE: " + super.toString() +  getSplitInfo(getIdNode()) ;
+	return "DISCRETE: " + super.toString() + getSplitInfo(getIdNode());
     }
 
 }
