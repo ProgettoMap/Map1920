@@ -18,7 +18,7 @@ public class Data {
     private Attribute explanatorySet[]; // Array di oggetti di tipo Attribute per rappresentare gli attributi
     // indipendenti di tipo discreto
 
-    private ContinuousAttribute classAttribute; // Oggetto per modellare l'attributo di classe Attributo
+    private ContinuousAttribute classAttribute; // Oggetto per modellare l'attributo di classe ContinuousAttribute
 
     Data(String fileName) throws FileNotFoundException {
 

@@ -32,10 +32,10 @@ abstract class SplitNode extends Node {
 		super(trainingSet, beginExampleIndex, endExampleIndex);
 		trainingSet.sort(attribute, beginExampleIndex, endExampleIndex); // order by attribute
 		setSplitInfo(trainingSet, beginExampleIndex, endExampleIndex, attribute);
-
-		// TODO: riempire l'array mapSplit
-
+		
 		// compute variance
+
+		
 		splitVariance = 0;
 		for (int i = 0; i < mapSplit.length; i++) {
 
@@ -48,6 +48,8 @@ abstract class SplitNode extends Node {
 		this.attribute = attribute;
 
 	}
+
+
 
 	/**
 	 * Metodo abstract per generare le informazioni necessarie per ciascuno degli
@@ -139,8 +141,8 @@ abstract class SplitNode extends Node {
 	 *         varianza, varianza di Split) di ciascun test
 	 */
 	public String toString() {
-		String v = "SPLIT : attribute=" + attribute + " " + super.toString() + " Split Variance: " + getVariance()
-				+ "\n";
+		String v = "SPLIT : attribute=" + attribute.getName() + " " + super.toString() + " Split Variance: "
+				+ getVariance() + "\n";
 
 		for (int i = 0; i < mapSplit.length; i++) {
 			v += "\t" + mapSplit[i] + "\n";

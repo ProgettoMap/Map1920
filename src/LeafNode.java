@@ -25,10 +25,10 @@ class LeafNode extends Node {
 		// Avvaloro attributo predictedClassValue come media dei valori
 		// dell’attributo di classe che ricadono nella partizione da begin a end
 		double sumPredictedClassValue = 0;
-		for (int i = beginExampleIndex; i < endExampleIndex; i++) {
+		for (int i = beginExampleIndex; i <= endExampleIndex; i++) {
 			sumPredictedClassValue += trainingSet.getClassValue(i);
 		}
-		this.predictedClassValue = sumPredictedClassValue / (endExampleIndex - beginExampleIndex);
+		this.predictedClassValue = sumPredictedClassValue / (endExampleIndex+1 - beginExampleIndex);
 
 	}
 

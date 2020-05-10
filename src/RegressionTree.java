@@ -6,7 +6,13 @@ class RegressionTree {
 
     Node root; // radice del sotto-albero corrente
     RegressionTree childTree[]; // array di sotto-alberi originanti nel nodo root.
-				// Vi è un elemento nell’array per ogni figlio del nodo
+    // Vi è un elemento nell’array per ogni figlio del nodo
+
+    /**
+     * Costruttore di default
+     */
+    private RegressionTree() {
+    }
 
     /**
      * Istanzia un sotto-albero dell'intero albero e avvia l'induzione dell'albero
@@ -52,9 +58,10 @@ class RegressionTree {
 	    if (root.getNumberOfChildren() > 1) {
 		childTree = new RegressionTree[root.getNumberOfChildren()];
 		for (int i = 0; i < root.getNumberOfChildren(); i++) {
-		    childTree[i] = new RegressionTree(trainingSet);
-		    childTree[i].learnTree(trainingSet, ((SplitNode) root).getSplitInfo(i).beginIndex,
-			    ((SplitNode) root).getSplitInfo(i).endIndex, numberOfExamplesPerLeaf);
+		    childTree[i] = new RegressionTree();
+		    int beginIndex = ((SplitNode) root).getSplitInfo(i).beginIndex;
+		    int endIndex = ((SplitNode) root).getSplitInfo(i).endIndex;
+		    childTree[i].learnTree(trainingSet, beginIndex, endIndex, numberOfExamplesPerLeaf);
 		}
 	    } else
 		root = new LeafNode(trainingSet, begin, end);
@@ -79,15 +86,22 @@ class RegressionTree {
      * @return SplitNode - nodo di split migliore per il sotto-insieme di training
      */
     SplitNode determineBestSplitNode(Data trainingSet, int begin, int end) {
-	// TODO: da implementare
-	// ciclo for per trovare l'attributo con varianza minima
-	
+
 	DiscreteNode potentialNodes[] = new DiscreteNode[trainingSet.getNumberOfExplanatoryAttributes()];
 	for (int jColumn = 0; jColumn < trainingSet.getNumberOfExplanatoryAttributes(); jColumn++) {
-	    potentialNodes[jColumn] = new DiscreteNode(trainingSet, begin, end, trainingSet.getExplanatoryAttribute(jColumn));
+	    potentialNodes[jColumn] = new DiscreteNode(trainingSet, begin, end,
+		    trainingSet.getExplanatoryAttribute(jColumn));
+	    begin = potentialNodes[jColumn].getSplitInfo(jColumn).getBeginindex();
+	    end = potentialNodes[jColumn].getSplitInfo(jColumn).getEndIndex();
 	}
 
-	return null;
+	int indexBestSplitNode = 0;
+
+	for (int i = 1; i < trainingSet.getNumberOfExplanatoryAttributes(); i++) {
+	    if (potentialNodes[i].getVariance() < potentialNodes[indexBestSplitNode].getVariance())
+		indexBestSplitNode = i;
+	}
+	return potentialNodes[indexBestSplitNode];
     }
 
     /**
