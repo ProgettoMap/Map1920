@@ -15,7 +15,7 @@ abstract class Node {
 	 * Avvalora gli attributi primitivi di classe, inclusa la varianza che viene
 	 * calcolata rispetto all'attributo da predire nel sotto-insieme di training
 	 * coperto dal nodo
-	 * 
+	 *
 	 * @param Data trainingSet - oggetto di classe Data contenente il training set
 	 *             completo
 	 * @param      int beginExampleIndex - indice che identifica il sotto-insieme di
@@ -27,8 +27,8 @@ abstract class Node {
 		this.beginExampleIndex = beginExampleIndex;
 		this.endExampleIndex = endExampleIndex;
 		this.variance = computeVariance(trainingSet, beginExampleIndex, endExampleIndex);
-		idNodeCount++;
 		this.idNode = idNodeCount;
+		idNodeCount++;
 
 	}
 
@@ -61,7 +61,7 @@ abstract class Node {
 
 	/**
 	 * Restituisce il valore dell'attributo idNode
-	 * 
+	 *
 	 * @return int - identificativo numerico del nodo
 	 */
 	int getIdNode() {
@@ -70,7 +70,7 @@ abstract class Node {
 
 	/**
 	 * Restituisce il valore dell'attributo beginExampleIndex
-	 * 
+	 *
 	 * @return int - indice del primo esempio del sotto-insieme rispetto al training
 	 *         set complessivo
 	 */
@@ -80,7 +80,7 @@ abstract class Node {
 
 	/**
 	 * Restituisce il valore dell'attributo endExampleIndex
-	 * 
+	 *
 	 * @return int - indice dell'ultimo esempio del sotto-insieme rispetto al
 	 *         training set complessivo
 	 */
@@ -90,7 +90,7 @@ abstract class Node {
 
 	/**
 	 * Restituisce il valore dell'attributo variance
-	 * 
+	 *
 	 * @return double - valore dello SSE dell’attributo da predire rispetto al nodo
 	 *         corrente
 	 */
@@ -101,7 +101,7 @@ abstract class Node {
 	/**
 	 * Metodo astratto la cui implementazione riguarda i nodi di tipo test (split
 	 * node) dai quali si possono generare figli, uno per ogni split prodotto.
-	 * 
+	 *
 	 * @return int - Numero di nodi figli
 	 */
 	abstract int getNumberOfChildren();
@@ -109,7 +109,7 @@ abstract class Node {
 	/**
 	 * Concatena in un oggetto String i valori di beginExampleIndex,
 	 * endExampleIndex, variance e restituisce la stringa finale.
-	 * 
+	 *
 	 */
 	public String toString() {
 		return ("[Examples: " + beginExampleIndex + "-" + endExampleIndex + "] variance:" + variance);

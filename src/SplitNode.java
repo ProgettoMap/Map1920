@@ -12,16 +12,16 @@ abstract class SplitNode extends Node {
 
 	/**
 	 * Invoca il costruttore della superclasse
-	 * 
+	 *
 	 * Ordina i valori dell'attributo di input per gli esempi nel range
 	 * beginExampleIndex - endExampleIndex e sfrutta questo ordinamento per
 	 * determinare i possibili split e popolare l'array mapSplit[].
-	 * 
+	 *
 	 * Computa lo SSE (splitVariance) per l'attributo usato nello split sulla base
 	 * del partizionamento indotto dallo split (lo stesso è la somma degli SSE
 	 * calcolati su ciascuno SplitInfo collezionati in mapSplit)
-	 * 
-	 * 
+	 *
+	 *
 	 * @param Data      trainingSet
 	 * @param           int beginExampleIndex
 	 * @param           int endExampleIndex
@@ -32,10 +32,10 @@ abstract class SplitNode extends Node {
 		super(trainingSet, beginExampleIndex, endExampleIndex);
 		trainingSet.sort(attribute, beginExampleIndex, endExampleIndex); // order by attribute
 		setSplitInfo(trainingSet, beginExampleIndex, endExampleIndex, attribute);
-		
+
 		// compute variance
 
-		
+
 		splitVariance = 0;
 		for (int i = 0; i < mapSplit.length; i++) {
 
@@ -69,10 +69,10 @@ abstract class SplitNode extends Node {
 	 * (Implementazione da class abstract) effettua il confronto del valore in input
 	 * rispetto al valore contenuto nell’attributo splitValue di ciascuno degli
 	 * oggetti SplitInfo collezionati in mapSplit[].
-	 * 
+	 *
 	 * Restituisce l'identificativo dello split (indice della posizione nell’array
 	 * mapSplit) con cui il test è positivo
-	 * 
+	 *
 	 * @param Object value - Valore discreto dell'attributo che si vuole testare
 	 *               rispetto a tutti gli split
 	 * @return int - Identificativo del ramo di split
@@ -81,7 +81,7 @@ abstract class SplitNode extends Node {
 
 	/**
 	 * Restituisce l'oggetto per l'attributo usato per lo split
-	 * 
+	 *
 	 * @return Attribute - Oggetto per l'attributo usato per lo split
 	 */
 	Attribute getAttribute() {
@@ -90,7 +90,7 @@ abstract class SplitNode extends Node {
 
 	/**
 	 * Restituisce l'information gain per lo split corrente
-	 * 
+	 *
 	 * @return double splitVariance - attributo che contiene il valore di varianza a
 	 *         seguito del partizionamento
 	 */
@@ -100,7 +100,7 @@ abstract class SplitNode extends Node {
 
 	/**
 	 * Restituisce il numero dei rami originanti nel nodo corrente
-	 * 
+	 *
 	 * @return int - numeri di figli di un nodo di split
 	 */
 	int getNumberOfChildren() {
@@ -109,7 +109,7 @@ abstract class SplitNode extends Node {
 
 	/**
 	 * Restituisce le informazioni per il ramo in mapSplit[] indicizzato da child.
-	 * 
+	 *
 	 * @param int child - numero di figlio di un ramo di Split
 	 * @return SplitInfo - oggetto contenente le informazioni relative al nodo di
 	 *         tipo SplitNode
@@ -121,7 +121,7 @@ abstract class SplitNode extends Node {
 	/**
 	 * Concatena le informazioni di ciascun test (attributo, operatore e valore) in
 	 * una String finale.
-	 * 
+	 *
 	 * Necessario per la predizione di nuovi esempi
 	 *
 	 * @return String - informazioni di ciascun test
@@ -136,20 +136,20 @@ abstract class SplitNode extends Node {
 	/**
 	 * Concatena le informazioni di ciascun test (attributo, esempi coperti,
 	 * varianza, varianza di Split) in una String finale.
-	 * 
+	 *
 	 * @return String - Informazioni concatenate (attributo, esempi coperti,
 	 *         varianza, varianza di Split) di ciascun test
 	 */
-	public String toString() {
-		String v = "SPLIT : attribute=" + attribute.getName() + " " + super.toString() + " Split Variance: "
-				+ getVariance() + "\n";
+	 public String toString() {
 
-		for (int i = 0; i < mapSplit.length; i++) {
-			v += "\t" + mapSplit[i] + "\n";
-		}
+	        String v= "SPLIT : attribute=" +attribute +" Nodo: "+ super.toString()+  " Split Variance: " + getVariance()+ "\n" ;
 
-		return v;
-	}
+	        for(int i=0;i<mapSplit.length;i++){
+	            v+= "\t"+mapSplit[i]+"\n";
+	        }
+	       
+	        return v;
+	    }
 
 	/*
 	 * Esempi di splitnode: X1, X2...
@@ -157,9 +157,9 @@ abstract class SplitNode extends Node {
 	// Classe che aggrega tutte le informazioni riguardanti un nodo di split
 	/*
 	 * NOTE: E' la descrizione della variabile indipendente (es. X1, X2)
-	 * 
+	 *
 	 * Attributo = variabile (dipendente / indipendente)
-	 * 
+	 *
 	 * Es. Descrizione: motor | Valori: A,B,C,D,E Descrizione: screw | Valori:
 	 * A,B,C,D,E Descrizione: pgain | Valori: 3,4,5,6 Descrizione: vgain | Valori:
 	 * 1,2,3,4,5
@@ -178,7 +178,7 @@ abstract class SplitNode extends Node {
 
 		/**
 		 * Costruttore che avvalora gli attributi di classe per split a valori discreti
-		 * 
+		 *
 		 * @param Object splitValue - valore di tipo Object (di un attributo
 		 *               indipendente) che definisce uno split
 		 * @param        int beginIndex -indice che identifica il sotto-insieme di
@@ -199,7 +199,7 @@ abstract class SplitNode extends Node {
 		/**
 		 * Costruttore che avvalora gli attributi di classe per generici split (da usare
 		 * per valori continui)
-		 * 
+		 *
 		 * @param Object splitValue - valore di tipo Object (di un attributo
 		 *               indipendente) che definisce uno split
 		 * @param        int beginIndex -indice che identifica il sotto-insieme di
@@ -222,7 +222,7 @@ abstract class SplitNode extends Node {
 		}
 
 		/**
-		 * 
+		 *
 		 * @return int getBegin - indice che identifica l'inizio sotto-insieme di
 		 *         training coperto dal nodo corrente
 		 */
@@ -249,7 +249,7 @@ abstract class SplitNode extends Node {
 		 * Concatena in un oggetto String i valori di beginExampleIndex,
 		 * endExampleIndex, child, splitValue, comparator e restituisce la stringa
 		 * finale.
-		 * 
+		 *
 		 * @return String - Stringa contenente i valori di beginExampleIndex,
 		 *         endExampleIndex, child, splitValue, comparator concatenati.
 		 */
@@ -260,7 +260,7 @@ abstract class SplitNode extends Node {
 
 		/**
 		 * Restituisce il valore dell'operatore matematico che definisce il test
-		 * 
+		 *
 		 * @return String - valore dell'operatore matematico che definisce il test
 		 */
 		String getComparator() {
