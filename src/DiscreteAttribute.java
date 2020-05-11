@@ -43,11 +43,7 @@ public class DiscreteAttribute extends Attribute {
 	@Override
 	public String toString() {
 
-		String values_concat = "";
-		for (String s : values) {
-			values_concat += s + " ";
-		}
-		return values_concat;
+		return getName();
 
 	}
 }
