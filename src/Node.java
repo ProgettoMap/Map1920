@@ -43,7 +43,7 @@ abstract class Node {
 	 */
 	private double computeVariance(Data trainingSet, int beginExampleIndex, int endExampleIndex) {
 
-		Double[] classValues = new Double[endExampleIndex - beginExampleIndex + 1];
+		double[] classValues = new double[endExampleIndex - beginExampleIndex + 1];
 		double sommatoria = 0;
 		for (int i = 0; i < endExampleIndex - beginExampleIndex + 1; i++) {
 			classValues[i] = trainingSet.getClassValue(i + beginExampleIndex);
@@ -96,15 +96,6 @@ abstract class Node {
 	 */
 	double getVariance() {
 		return variance;
-	}
-
-	/**
-	 * Metodo che cambia lo stato dell'attributo variance
-	 * 
-	 * @param variance
-	 */
-	void setVariance(double variance) {
-		this.variance = variance;
 	}
 
 	/**

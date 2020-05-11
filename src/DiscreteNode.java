@@ -41,6 +41,7 @@ class DiscreteNode extends SplitNode {
 	@Override
 	void setSplitInfo(Data trainingSet, int beginExampleIndex, int endExampleIndex, Attribute attribute) {
 	    //TODO: vedere se è possibile ottimizzarla
+	    //TODO: Fare i cast di attribute in DiscreteAttribute
 		int numberOfSplit = getNumberOfSplit(trainingSet, beginExampleIndex, endExampleIndex, attribute);
 		int begin = beginExampleIndex;
 		Object splitValue = trainingSet.getExplanatoryValue(0, attribute.getIndex());
@@ -93,8 +94,15 @@ class DiscreteNode extends SplitNode {
 	 */
 	@Override
 	int testCondition(Object value) {
-
-		return 0;
+	    
+	    String valueStr = (String) value;
+	    int k = 0;
+	    for (SplitInfo splitInfo : mapSplit) {
+		if(splitInfo.getSplitValue().equals(valueStr))
+		    return k;
+		k += 1;		
+	    }
+	    return -1;
 	}
 
 	/**

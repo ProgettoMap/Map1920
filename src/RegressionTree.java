@@ -9,7 +9,7 @@ class RegressionTree {
     // Vi è un elemento nell’array per ogni figlio del nodo
 
     /**
-     * Costruttore di default
+     *  Istanzia un sotto-albero dell'intero albero 
      */
     private RegressionTree() {
     }
@@ -89,10 +89,12 @@ class RegressionTree {
 
 	DiscreteNode potentialNodes[] = new DiscreteNode[trainingSet.getNumberOfExplanatoryAttributes()];
 	for (int jColumn = 0; jColumn < trainingSet.getNumberOfExplanatoryAttributes(); jColumn++) {
+	    
 	    potentialNodes[jColumn] = new DiscreteNode(trainingSet, begin, end,
 		    trainingSet.getExplanatoryAttribute(jColumn));
-	    begin = potentialNodes[jColumn].getSplitInfo(jColumn).getBeginindex();
-	    end = potentialNodes[jColumn].getSplitInfo(jColumn).getEndIndex();
+//	    begin = potentialNodes[jColumn].getSplitInfo(jColumn).getBeginindex();
+//	    end = potentialNodes[jColumn].getSplitInfo(jColumn).getEndIndex();
+	    
 	}
 
 	int indexBestSplitNode = 0;
