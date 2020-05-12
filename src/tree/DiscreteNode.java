@@ -1,3 +1,8 @@
+package tree;
+
+import data.Attribute;
+import data.Data;
+
 /**
  * Entità nodo di split relativo ad un attributo indipendente discreto
  */
@@ -41,7 +46,7 @@ class DiscreteNode extends SplitNode {
 	@Override
 	void setSplitInfo(Data trainingSet, int beginExampleIndex, int endExampleIndex, Attribute attribute) {
 
-		//TODO: Fare i cast di attribute in DiscreteAttribute
+		// TODO: Fare i cast di attribute in DiscreteAttribute
 		int numberOfSplit = getNumberOfSplit(trainingSet, beginExampleIndex, endExampleIndex, attribute);
 		int begin = beginExampleIndex;
 		Object splitValue = trainingSet.getExplanatoryValue(begin, attribute.getIndex());
@@ -95,14 +100,14 @@ class DiscreteNode extends SplitNode {
 	@Override
 	int testCondition(Object value) {
 
-	    String valueStr = (String) value;
-	    int k = 0;
-	    for (SplitInfo splitInfo : mapSplit) {
-		if(splitInfo.getSplitValue().equals(valueStr))
-		    return k;
-		k += 1;
-	    }
-	    return -1;
+		String valueStr = (String) value;
+		int k = 0;
+		for (SplitInfo splitInfo : mapSplit) {
+			if (splitInfo.getSplitValue().equals(valueStr))
+				return k;
+			k += 1;
+		}
+		return -1;
 	}
 
 	/**

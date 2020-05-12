@@ -1,3 +1,5 @@
+package data;
+
 /**
  * Rappresenta un attributo discreto
  */

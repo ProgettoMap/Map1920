@@ -1,3 +1,7 @@
+package tree;
+
+import data.Attribute;
+import data.Data;
 
 abstract class SplitNode extends Node {
 
@@ -35,7 +39,6 @@ abstract class SplitNode extends Node {
 
 		// compute variance
 
-
 		splitVariance = 0;
 		for (int i = 0; i < mapSplit.length; i++) {
 
@@ -48,8 +51,6 @@ abstract class SplitNode extends Node {
 		this.attribute = attribute;
 
 	}
-
-
 
 	/**
 	 * Metodo abstract per generare le informazioni necessarie per ciascuno degli
@@ -140,16 +141,17 @@ abstract class SplitNode extends Node {
 	 * @return String - Informazioni concatenate (attributo, esempi coperti,
 	 *         varianza, varianza di Split) di ciascun test
 	 */
-	 public String toString() {
+	public String toString() {
 
-	        String v= "SPLIT : attribute=" +attribute +" Nodo: "+ super.toString()+  " Split Variance: " + getVariance()+ "\n" ;
+		String v = "SPLIT : attribute=" + attribute + " Nodo: " + super.toString() + " Split Variance: " + getVariance()
+				+ "\n";
 
-	        for(int i=0;i<mapSplit.length;i++){
-	            v+= "\t"+mapSplit[i]+"\n";
-	        }
-	       
-	        return v;
-	    }
+		for (int i = 0; i < mapSplit.length; i++) {
+			v += "\t" + mapSplit[i] + "\n";
+		}
+
+		return v;
+	}
 
 	/*
 	 * Esempi di splitnode: X1, X2...
