@@ -20,6 +20,7 @@ public class Data {
 
     private ContinuousAttribute classAttribute; // Oggetto per modellare l'attributo di classe ContinuousAttribute
 
+    //Data(String fileName) throws FileNotFoundException { TODO: rimettere per terza esercitazione
     Data(String fileName) throws FileNotFoundException {
 
 	File inFile = new File(fileName);

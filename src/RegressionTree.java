@@ -1,8 +1,10 @@
+import utility.Keyboard;
+
 /**
  * Entità albero di decisione come insieme di sotto-alberi
  *
  */
-class RegressionTree {
+class RegressionTree extends Keyboard {
 
     Node root; // radice del sotto-albero corrente
     RegressionTree childTree[]; // array di sotto-alberi originanti nel nodo root.
@@ -124,8 +126,8 @@ class RegressionTree {
     public void printRules() {
 
 	System.out.println("********* RULES **********\n");
+	printRules("");
 
-//        printRules();
 	System.out.println("*************************\n");
 
     }
@@ -141,6 +143,42 @@ class RegressionTree {
      *                superiore
      */
     private void printRules(String current) {
+
+
+	if (root instanceof LeafNode) {
+
+	    current += " ==> Class = " + ((LeafNode) root).getPredictedClassValue();
+
+	    System.out.println(current);
+	} else if (root instanceof SplitNode) {
+	
+	    current += ((SplitNode) root).getAttribute() + " ";
+
+	    for (int i = 0; i < root.getNumberOfChildren(); i++) {
+		
+		
+		String temp = "";
+			
+		
+		temp = current + ((SplitNode) root).getSplitInfo(i).getComparator() + " "
+			+ ((SplitNode) root).getSplitInfo(i).getSplitValue();
+		
+		if(childTree[i].root.getNumberOfChildren() != 0)
+		    temp += " AND ";	
+		
+		childTree[i].printRules(temp);
+		
+//		} else  childTree[i].printRules(current + ((SplitNode) root).getAttribute() + " " + ((SplitNode) root).getSplitInfo(i).getComparator() + " "
+//			+ ((SplitNode) root).getSplitInfo(i).getSplitValue()
+//		);
+//		else if (childTree[i].root instanceof LeafNode) {
+//		    current += " ==> Class = ";
+//
+//		    System.out.println(current);
+
+	    }
+
+	}
 
     }
 
@@ -189,5 +227,38 @@ class RegressionTree {
      */
     boolean isLeaf(Data trainingSet, int begin, int end, int numberOfExamplesPerLeaf) {
 	return ((end - begin + 1) <= numberOfExamplesPerLeaf);
+    }
+
+    /**
+     * Visualizza le informazioni di ciascuno split dell'albero
+     * (SplitNode.formulateQuery()) e per il corrispondente attributo acquisisce il
+     * valore dell'esempio da predire da tastiera.
+     * 
+     * Se il nodo root corrente è leaf termina l'acquisizione e visualizza la
+     * predizione per l’attributo classe, altrimenti invoca ricorsivamente sul
+     * figlio di root in childTree[] individuato dal valore acquisito da tastiera.
+     * 
+     * Il metodo sollevare l'eccezione UnknownValueException qualora la risposta
+     * dell’utente non permetta di selezionare una ramo valido del nodo di split.
+     * L'eccezione sarà gestita nel metodo che invoca predictClass() .
+     * 
+     * @return Double - oggetto contenente il valore di classe predetto per
+     *         l'esempio acquisito
+     * @throws UnknownValueException
+     */
+    Double predictClass() throws UnknownValueException {
+
+	if (root instanceof LeafNode)
+	    return ((LeafNode) root).getPredictedClassValue();
+	else {
+	    int risp;
+	    System.out.println(((SplitNode) root).formulateQuery());
+	    risp = Keyboard.readInt();
+	    if (risp == -1 || risp >= root.getNumberOfChildren())
+		throw new UnknownValueException(
+			"The answer should be an integer between 0 and " + (root.getNumberOfChildren() - 1) + "!");
+	    else
+		return childTree[risp].predictClass();
+	}
     }
 }

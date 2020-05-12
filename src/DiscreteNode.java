@@ -110,7 +110,7 @@ class DiscreteNode extends SplitNode {
 	 */
 	@Override
 	public String toString() {
-		return "DISCRETE: " + super.toString();
+		return "DISCRETE " + super.toString();
 	}
 
 }
