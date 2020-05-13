@@ -5,9 +5,9 @@ package exception;
  */
 public class UnknownValueException extends Exception {
 
-    public UnknownValueException() {
+	public UnknownValueException() {
 
-    }
+	}
 
     public UnknownValueException(String arg0) {
 	super(arg0);

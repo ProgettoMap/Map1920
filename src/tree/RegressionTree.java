@@ -225,15 +225,15 @@ public class RegressionTree extends Keyboard {
 	 * Visualizza le informazioni di ciascuno split dell'albero
 	 * (SplitNode.formulateQuery()) e per il corrispondente attributo acquisisce il
 	 * valore dell'esempio da predire da tastiera.
-	 * 
+	 *
 	 * Se il nodo root corrente è leaf termina l'acquisizione e visualizza la
 	 * predizione per l’attributo classe, altrimenti invoca ricorsivamente sul
 	 * figlio di root in childTree[] individuato dal valore acquisito da tastiera.
-	 * 
+	 *
 	 * Il metodo sollevare l'eccezione UnknownValueException qualora la risposta
 	 * dell’utente non permetta di selezionare una ramo valido del nodo di split.
 	 * L'eccezione sarà gestita nel metodo che invoca predictClass() .
-	 * 
+	 *
 	 * @return Double - oggetto contenente il valore di classe predetto per
 	 *         l'esempio acquisito
 	 * @throws UnknownValueException
