@@ -1,8 +1,8 @@
 package data;
 
-import exception.TrainingDataException;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 /**
@@ -22,74 +22,117 @@ public class Data {
 
     private ContinuousAttribute classAttribute; // Oggetto per modellare l'attributo di classe ContinuousAttribute
 
-    public Data(String fileName) throws TrainingDataException{
+    public Data(String fileName) throws TrainingDataException { // ATTENZIONE! NON MODIFICARE L'intestazione! Deve
+	// essere "public Data(String fileName) throws
+	// TrainingDataException"
+
+	System.out.println("Starting data acquisition phase:\n");
+
+	boolean isTagTargetFound = false;
+	boolean isTagDescFound = false;
 
 	File inFile = new File(fileName);
-	System.out.println("Starting data acquisition phase!:\n");
-
-	Scanner sc;
-	String line;
-	
-	if(! inFile.exists())
-	    throw new TrainingDataException(fileName + "(Impossibile trovare il file specificato)");	
-	
+	Scanner sc = null;
 	try {
 	    sc = new Scanner(inFile);
-		line = sc.nextLine();	
-		if (!line.contains("@schema")) {
-		    sc.close();
-		    throw new TrainingDataException("Errore nel training set. Attributo @schema non trovato.");
-		}
-		
-		String s[] = line.split(" ");
+	    String line = sc.nextLine();
+	    if (!line.contains("@schema")) {
+		sc.close();
+		throw new TrainingDataException("Errore nel training set. Attributo @schema non trovato.");
+	    }
 
-		explanatorySet = new Attribute[new Integer(s[1])];
-		short iAttribute = 0;
-		line = sc.nextLine();
-		while (!line.contains("@data")) {
+	    String s[] = line.split(" ");
+
+	    explanatorySet = new Attribute[new Integer(s[1])];
+	    short iAttribute = 0;
+	    line = sc.nextLine();
+	    while (!line.contains("@data")) {
+		if (sc.hasNextLine()) { // Finchè ci sono righe nel file
 		    s = line.split(" ");
 		    if (s[0].equals("@desc")) { // aggiungo l'attributo allo spazio descrittivo
 			// @desc motor discrete A,B,C,D,E
+			isTagDescFound = true;
 			String discreteValues[] = s[2].split(",");
 			explanatorySet[iAttribute] = new DiscreteAttribute(s[1], iAttribute, discreteValues);
-		    } else if (s[0].equals("@target"))
+		    } else if (s[0].equals("@target")) {
+			isTagTargetFound = true;
 			classAttribute = new ContinuousAttribute(s[1], iAttribute);
+		    }
 
 		    iAttribute++;
 		    line = sc.nextLine();
+		} else {
+		    throw new TrainingDataException(
+			    new NoSuchElementException().toString() + ": Tag @data non trovato");
 		}
 
-		// avvalorare numero di esempi
-		// @data 167
-		numberOfExamples = new Integer(line.split(" ")[1]);
+	    }
+	    //TODO: indicare numero di riga dell'errore
+	    
+	    //TODO: errore a runtime se esiste un tag non valido (quindi qualsiasi stringa dopo il tag @ che non sia schema, desc, data, o target genero errore 
+	    
+	    if (!isTagTargetFound) {
+		throw new TrainingDataException("Tag @target non trovato");
+	    }
+	    if (!isTagDescFound) {
+		throw new TrainingDataException("Tag @desc non trovato");
+	    }
 
-		// popolare data
-		data = new Object[numberOfExamples][explanatorySet.length + 1];
-		short iRow = 0;
-		while (sc.hasNextLine()) {
-		    line = sc.nextLine();
-		    // assumo che attributi siano tutti discreti
-		    s = line.split(","); // E,E,5,4, 0.28125095
-		    if( ! isDouble(s[s.length - 1]) ) {
-			//TODO: gestire caso in cui il valore non appare nella colonna dell'attributo di classe
-			sc.close();
-			throw new TrainingDataException("");
-		    }
-			
-		    for (short jColumn = 0; jColumn < s.length - 1; jColumn++)
-			data[iRow][jColumn] = s[jColumn];
-		    data[iRow][s.length - 1] = new Double(s[s.length - 1]);
-		    iRow++;
+	    /*
+	     * TODO: gestire l'eccezione dei seguenti casi:
+	     * 
+	     * - Mancanza dell'attributo schema (fatto)
+	     * 
+	     * - Mancanza dell'attributo @desc (fatto)
+	     * 
+	     * - Mancanza dell'attributo @target (fatto)
+	     * 
+	     * - Mancanza dell'attributo @data (fatto)
+	     * 
+	     * - Numero di attributi diverso da attributi desc
+	     * 
+	     * - Valori in data diversi dal valore dell'attributo
+	     * 
+	     * - Numero di attributi nel training set diverso dagli attributi specificati
+	     * nel training set
+	     * 
+	     * - Attributo di classe non di tipo float.
+	     */
 
+	    // avvalorare numero di esempi
+	    // @data 167
+	    numberOfExamples = new Integer(line.split(" ")[1]);
+
+	    // popolare data
+	    data = new Object[numberOfExamples][explanatorySet.length + 1];
+	    short iRow = 0;
+	    while (sc.hasNextLine()) {
+		line = sc.nextLine();
+		// assumo che attributi siano tutti discreti
+		s = line.split(","); // E,E,5,4, 0.28125095
+		if (!isDouble(s[s.length - 1])) {
+		    // TODO: gestire caso in cui il valore non appare nella colonna dell'attributo
+		    // di classe
+		    sc.close();
+		    throw new TrainingDataException("Valore target non double");
 		}
-		sc.close();
-		
-	} catch (TrainingDataException e) {
-	    e.getCause();
+
+		for (short jColumn = 0; jColumn < s.length - 1; jColumn++)
+		    data[iRow][jColumn] = s[jColumn];
+		data[iRow][s.length - 1] = new Double(s[s.length - 1]);
+		iRow++;
+
+	    }
+	    
+	    if(iRow != numberOfExamples)
+		throw new TrainingDataException("I valori letti sono diversi dal parametro @data.");
+
+	} catch (FileNotFoundException e) {
+	    throw new TrainingDataException(e.toString());
+	} finally {
+	   if(sc != null) // Chiudo lo scanner solo se viene trovato il file
+	       sc.close();
 	}
-	
-	
-	
 
     }
 
@@ -262,13 +305,13 @@ public class Data {
 //	}
 //
 //    }
-    
+
     private boolean isDouble(String value) {
-	    try {
-	        Double.parseDouble(value);
-	        return true;
-	    } catch (NumberFormatException e) {
-	        return false;
-	    }
+	try {
+	    Double.parseDouble(value);
+	    return true;
+	} catch (NumberFormatException e) {
+	    return false;
 	}
+    }
 }

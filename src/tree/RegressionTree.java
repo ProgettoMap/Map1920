@@ -2,7 +2,6 @@ package tree;
 
 import utility.Keyboard;
 import data.Data;
-import exception.UnknownValueException;
 
 /**
  * Entità albero di decisione come insieme di sotto-alberi
@@ -246,7 +245,7 @@ public class RegressionTree extends Keyboard {
 			int risp;
 			System.out.println(((SplitNode) root).formulateQuery());
 			risp = Keyboard.readInt();
-			if (risp == -1 || risp >= root.getNumberOfChildren())
+			if (risp < 0 || risp >= root.getNumberOfChildren())
 				throw new UnknownValueException(
 						"The answer should be an integer between 0 and " + (root.getNumberOfChildren() - 1) + "!");
 			else

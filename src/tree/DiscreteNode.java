@@ -107,6 +107,7 @@ class DiscreteNode extends SplitNode {
 				return k;
 			k += 1;
 		}
+		//TODO: lanciare eccezione ramo non esistente
 		return -1;
 	}
 
