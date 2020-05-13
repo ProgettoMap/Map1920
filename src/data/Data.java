@@ -1,3 +1,6 @@
+package data;
+
+import exception.TrainingDataException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -5,7 +8,6 @@ import java.util.Scanner;
 /**
  * Modella l'insieme di esempi di training
  */
-
 public class Data {
 
     private Object data[][]; // Matrice nXm di tipo Object che contiene il training set organizzato come
@@ -20,52 +22,74 @@ public class Data {
 
     private ContinuousAttribute classAttribute; // Oggetto per modellare l'attributo di classe ContinuousAttribute
 
-    //Data(String fileName) throws FileNotFoundException { TODO: rimettere per terza esercitazione
-    Data(String fileName) throws FileNotFoundException {
+    public Data(String fileName) throws TrainingDataException{
 
 	File inFile = new File(fileName);
-	Scanner sc = new Scanner(inFile);
-	String line = sc.nextLine();
-	if (!line.contains("@schema")) {
-	    sc.close();
-	    throw new RuntimeException("Errore nello schema");
+	System.out.println("Starting data acquisition phase!:\n");
+
+	Scanner sc;
+	String line;
+	
+	if(! inFile.exists())
+	    throw new TrainingDataException(fileName + "(Impossibile trovare il file specificato)");	
+	
+	try {
+	    sc = new Scanner(inFile);
+		line = sc.nextLine();	
+		if (!line.contains("@schema")) {
+		    sc.close();
+		    throw new TrainingDataException("Errore nel training set. Attributo @schema non trovato.");
+		}
+		
+		String s[] = line.split(" ");
+
+		explanatorySet = new Attribute[new Integer(s[1])];
+		short iAttribute = 0;
+		line = sc.nextLine();
+		while (!line.contains("@data")) {
+		    s = line.split(" ");
+		    if (s[0].equals("@desc")) { // aggiungo l'attributo allo spazio descrittivo
+			// @desc motor discrete A,B,C,D,E
+			String discreteValues[] = s[2].split(",");
+			explanatorySet[iAttribute] = new DiscreteAttribute(s[1], iAttribute, discreteValues);
+		    } else if (s[0].equals("@target"))
+			classAttribute = new ContinuousAttribute(s[1], iAttribute);
+
+		    iAttribute++;
+		    line = sc.nextLine();
+		}
+
+		// avvalorare numero di esempi
+		// @data 167
+		numberOfExamples = new Integer(line.split(" ")[1]);
+
+		// popolare data
+		data = new Object[numberOfExamples][explanatorySet.length + 1];
+		short iRow = 0;
+		while (sc.hasNextLine()) {
+		    line = sc.nextLine();
+		    // assumo che attributi siano tutti discreti
+		    s = line.split(","); // E,E,5,4, 0.28125095
+		    if( ! isDouble(s[s.length - 1]) ) {
+			//TODO: gestire caso in cui il valore non appare nella colonna dell'attributo di classe
+			sc.close();
+			throw new TrainingDataException("");
+		    }
+			
+		    for (short jColumn = 0; jColumn < s.length - 1; jColumn++)
+			data[iRow][jColumn] = s[jColumn];
+		    data[iRow][s.length - 1] = new Double(s[s.length - 1]);
+		    iRow++;
+
+		}
+		sc.close();
+		
+	} catch (TrainingDataException e) {
+	    e.getCause();
 	}
-	String s[] = line.split(" ");
-
-	explanatorySet = new Attribute[new Integer(s[1])];
-	short iAttribute = 0;
-	line = sc.nextLine();
-	while (!line.contains("@data")) {
-	    s = line.split(" ");
-	    if (s[0].equals("@desc")) { // aggiungo l'attributo allo spazio descrittivo
-		// @desc motor discrete A,B,C,D,E
-		String discreteValues[] = s[2].split(",");
-		explanatorySet[iAttribute] = new DiscreteAttribute(s[1], iAttribute, discreteValues);
-	    } else if (s[0].equals("@target"))
-		classAttribute = new ContinuousAttribute(s[1], iAttribute);
-
-	    iAttribute++;
-	    line = sc.nextLine();
-	}
-
-	// avvalorare numero di esempi
-	// @data 167
-	numberOfExamples = new Integer(line.split(" ")[1]);
-
-	// popolare data
-	data = new Object[numberOfExamples][explanatorySet.length + 1];
-	short iRow = 0;
-	while (sc.hasNextLine()) {
-	    line = sc.nextLine();
-	    // assumo che attributi siano tutti discreti
-	    s = line.split(","); // E,E,5,4, 0.28125095
-	    for (short jColumn = 0; jColumn < s.length - 1; jColumn++)
-		data[iRow][jColumn] = s[jColumn];
-	    data[iRow][s.length - 1] = new Double(s[s.length - 1]);
-	    iRow++;
-
-	}
-	sc.close();
+	
+	
+	
 
     }
 
@@ -74,7 +98,7 @@ public class Data {
      *
      * @return getNumberOfExamples
      */
-    int getNumberOfExamples() {
+    public int getNumberOfExamples() {
 	return numberOfExamples;
     }
 
@@ -83,7 +107,7 @@ public class Data {
      *
      * @return length dell'array explanatorySet
      */
-    int getNumberOfExplanatoryAttributes() {
+    public int getNumberOfExplanatoryAttributes() {
 	return explanatorySet.length;
     }
 
@@ -106,7 +130,7 @@ public class Data {
      * @return data[exampleIndex][attributeIndex]
      */
 
-    Object getExplanatoryValue(int exampleIndex, int attributeIndex) {
+    public Object getExplanatoryValue(int exampleIndex, int attributeIndex) {
 	return data[exampleIndex][attributeIndex];
     }
 
@@ -211,7 +235,7 @@ public class Data {
      *              indipendente
      * @return oggetto Attribute indicizzato da index
      */
-    Attribute getExplanatoryAttribute(int index) {
+    public Attribute getExplanatoryAttribute(int index) {
 	return explanatorySet[index];
     }
 
@@ -238,4 +262,13 @@ public class Data {
 //	}
 //
 //    }
+    
+    private boolean isDouble(String value) {
+	    try {
+	        Double.parseDouble(value);
+	        return true;
+	    } catch (NumberFormatException e) {
+	        return false;
+	    }
+	}
 }
