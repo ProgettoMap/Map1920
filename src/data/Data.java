@@ -48,9 +48,8 @@ public class Data {
 			while (!line.contains("@data")) {
 				if (sc.hasNextLine()) { // Finchè ci sono righe nel file
 					s = line.split(" ");
+					if (s[0].equals("@desc") && iAttribute <= explanatorySet.length - 1) { // aggiungo l'attributo allo spazio descrittivo
 
-					if (s[0].equals("@desc") && iAttribute <= explanatorySet.length - 1) { // aggiungo l'attributo allo
-																							// spazio descrittivo
 						// @desc motor discrete A,B,C,D,E
 						isTagDescFound = true;
 						String discreteValues[] = s[2].split(",");
@@ -132,6 +131,7 @@ public class Data {
 					data[iRow][jColumn] = s[jColumn];
 				}
 
+
 				data[iRow][s.length - 1] = new Double(s[s.length - 1]);
 				iRow++;
 
@@ -172,6 +172,7 @@ public class Data {
 	 * 
 	 * @param int exampleIndex - indice di riga per la matrice data[][] per uno
 	 *        specifico esempio
+
 	 * @return double - valore dell'attributo di classe per l'esempio indicizzato in
 	 *         input
 	 */
