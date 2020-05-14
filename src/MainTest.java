@@ -11,48 +11,48 @@ import utility.Keyboard;
  */
 
 class MainTest extends Keyboard {
-    
-    public static void main(String[] args) throws TrainingDataException, UnknownValueException, FileNotFoundException {
 
-	System.out.println("Training set:\n");
+	public static void main(String[] args) throws TrainingDataException, UnknownValueException, FileNotFoundException {
 
-	String fileName = Keyboard.readString();
-	try {
+		System.out.println("Training set:\n");
 
-	    Data trainingSet = new Data(fileName);
-	    RegressionTree tree = new RegressionTree(trainingSet);
-	    tree.printRules();
-	    tree.printTree();
-	    String response;
+		String fileName = Keyboard.readString();
+		try {
 
-	    boolean responseValid = false;
-	    System.out.println("Starting prediction phase!");
+			Data trainingSet = new Data(fileName);
+			RegressionTree tree = new RegressionTree(trainingSet);
+			tree.printRules();
+			tree.printTree();
+			String response;
 
-	    try {
-		System.out.println(tree.predictClass());
-		do {
-		    System.out.println("Would you want to repeat? (y/n):\n");
-		    response = Keyboard.readString();
+			boolean responseValid = false;
+			System.out.println("Starting prediction phase!");
 
-		    responseValid = response.length() != 1 || !isValidResponse(response.charAt(0));
-		    if (!responseValid)
-			System.out.println("Character not valid. Retry please");
+			try {
+				System.out.println(tree.predictClass());
+				do {
+					System.out.println("Would you want to repeat? (y/n):\n");
+					response = Keyboard.readString();
 
-		} while (!responseValid);
-	    } catch (UnknownValueException e) {
-		System.out.println(e);
-	    }
+					responseValid = response.length() != 1 || !isValidResponse(response.charAt(0));
+					if (!responseValid)
+						System.out.println("Character not valid. Retry please");
 
-	    System.out.println("Would you want to repeat? (y/n):\n");
+				} while (!responseValid);
+			} catch (UnknownValueException e) {
+				System.out.println(e);
+			}
 
-	} catch (TrainingDataException e) {
-	    System.out.println(e);
+			System.out.println("Would you want to repeat? (y/n):\n");
+
+		} catch (TrainingDataException e) {
+			System.out.println(e);
+		}
+
 	}
 
-    }
-
-    private static boolean isValidResponse(Character response) {
-	return (response == 'y' || response == 'n');
-    }
+	private static boolean isValidResponse(Character response) {
+		return (response == 'y' || response == 'n');
+	}
 
 }

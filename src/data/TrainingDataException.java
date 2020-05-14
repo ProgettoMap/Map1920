@@ -1,6 +1,5 @@
 package data;
 
-import java.io.FileNotFoundException;
 
 /**
  * Gestisce le eccezioni causate da acquisizione errata del file:
