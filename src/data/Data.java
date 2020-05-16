@@ -133,8 +133,8 @@ public class Data {
 					throw new TrainingDataException("Il valore target specificato nella riga " + (iRow + 1) + ", colonna " + s.length + " non è di tipo double");
 				}
 
-				boolean trovato = false;
 				for (int jColumn = 0; jColumn < s.length - 1; jColumn++) {
+					boolean trovato = false;
 					int y = 0;
 					DiscreteAttribute temp = ((DiscreteAttribute) explanatorySet[jColumn]); // TODO: implementare
 					// istanceof quando
