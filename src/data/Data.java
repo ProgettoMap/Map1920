@@ -10,6 +10,11 @@ import java.util.Scanner;
  */
 public class Data {
 
+    private static final int NUM_PAROLE_RIGA_SCHEMA = 2;
+    private static final int NUM_PAROLE_RIGA_DESC = 3;
+    private static final int NUM_PAROLE_RIGA_TARGET = 2;
+    private static final int NUM_PAROLE_RIGA_DATA = 2;
+
     private Object data[][]; // Matrice nXm di tipo Object che contiene il training set organizzato come
     // numberOfExamples X numberAttribute
 
@@ -22,9 +27,7 @@ public class Data {
 
     private ContinuousAttribute classAttribute; // Oggetto per modellare l'attributo di classe ContinuousAttribute
 
-    public Data(String fileName) throws TrainingDataException { // ATTENZIONE! NON MODIFICARE L'intestazione! Deve
-	// essere "public Data(String fileName) throws
-	// TrainingDataException"
+    public Data(String fileName) throws TrainingDataException {
 
 	System.out.println("Starting data acquisition phase:\n");
 
@@ -33,115 +36,117 @@ public class Data {
 
 	File inFile = new File(fileName);
 	Scanner sc = null;
-	int rowFileRead = 0;
+	int rowFileRead = 0; // Righe lette (necessario per indicare l'errore nel file)
 	try {
 	    sc = new Scanner(inFile);
-	    String line = sc.nextLine();
-	    rowFileRead++;
-	    if (!line.contains("@schema")) {
-		sc.close();
-		throw new TrainingDataException("Errore nel training set. Attributo @schema non trovato.");
-	    }
+	    String line = sc.nextLine(); // Leggo la prima riga
+	    rowFileRead++; // Incremento numero righe lette
+
 	    String s[] = line.split(" ");
+	    if (s.length != NUM_PAROLE_RIGA_SCHEMA) {
+		throw new TrainingDataException("Errore nel training set a riga " + rowFileRead
+			+ ": il numero di parole trovate nella riga è diverso da quello atteso.\n"
+			+ "Ricontrolla la sintassi.\nEsempio: '@schema <numero intero positivo maggiore di 0>'");
+	    }
+
+	    if (!s[0].equals("@schema")) {
+		throw new TrainingDataException(
+			"Errore nel training set a riga " + rowFileRead + ": Attributo @schema non trovato.");
+	    }
+
+	    if (!s[1].matches("[0-9]+")) {
+		throw new TrainingDataException("Errore nel training set a riga " + rowFileRead
+			+ ": Il valore dell'attributo @schema deve essere intero! Valore inserito: " + s[1]);
+	    }
+
 	    explanatorySet = new Attribute[new Integer(s[1])];
 	    short iAttribute = 0;
 	    line = sc.nextLine();
 	    rowFileRead++;
 
-	    while (!line.contains("@data")) {
-		if (sc.hasNextLine()) { // Finchè ci sono righe nel file
+	    while (!line.contains("@data")) { // Trovo tutti i desc e i target
+		if (sc.hasNextLine()) {
 		    s = line.split(" ");
-		    if (s[0].equals("@desc") && iAttribute <= explanatorySet.length - 1) { // aggiungo l'attributo allo
-			// spazio descrittivo
 
+		    if (s[0].equals("@desc") && iAttribute <= explanatorySet.length - 1) {
+			// aggiungo l'attributo allo spazio descrittivo
 			// @desc motor discrete A,B,C,D,E
-			isTagDescFound = true;
-			String discreteValues[] = s[2].split(",");
-			if (s.length != 3) {
-			    throw new TrainingDataException("Il tag @desc a riga " + (rowFileRead + 1)
-				    + " non è stato impostato correttamente.\nLa sintassi corretta è la seguente: @desc<spazio><nome_attributo><spazio><classe di attributi separati da virgola>");
+			if (!isTagDescFound)
+			    isTagDescFound = true;
+
+			if (s.length != NUM_PAROLE_RIGA_DESC) {
+			    throw new TrainingDataException("Errore nel training set a riga " + rowFileRead
+				    + ": il numero di parole trovate nella riga è diverso da quello atteso.\n"
+				    + "Ricontrolla la sintassi.\n"
+				    + "Esempio: '@desc <nome attributo> <valori attributi separati da virgola>' ");
 			}
 
-			explanatorySet[iAttribute] = new DiscreteAttribute(s[1], iAttribute, discreteValues);
-		    } else if (s[0].equals("@target")) {
-			isTagTargetFound = true;
-			classAttribute = new ContinuousAttribute(s[1], iAttribute);
-		    }
-//						else if (iAttribute > explanatorySet.length - 1) {
-//						throw new TrainingDataException(
-//								new ArrayIndexOutOfBoundsException().toString() + ": Tag @data non trovato");
-//					}
+			String discreteValues[] = s[2].split(",");
 
-		    iAttribute++;
+			explanatorySet[iAttribute] = new DiscreteAttribute(s[1], iAttribute, discreteValues);
+			iAttribute++;
+
+		    } else if (s[0].equals("@target")) {
+
+			if (!isTagTargetFound)
+			    isTagTargetFound = true;
+
+			if (s.length != NUM_PAROLE_RIGA_TARGET) {
+			    throw new TrainingDataException("Errore nel training set a riga " + rowFileRead
+				    + ": il numero di parole trovate nella riga è diverso da quello atteso.\n"
+				    + "Ricontrolla la sintassi.\n" + "Esempio: '@target <nome attributo>'");
+			}
+
+			classAttribute = new ContinuousAttribute(s[1], iAttribute);
+
+		    }
+
 		    line = sc.nextLine();
 		    rowFileRead++;
 
 		} else {
-		    throw new TrainingDataException(
-			    new NoSuchElementException().toString() + ": Numero di tag @desc maggiore "); // TODO: ??
+		    throw new TrainingDataException(new NoSuchElementException().toString()
+			    + ": Attributo @data non trovato nel training set.");
 		}
 
 	    }
-	    // TODO: indicare numero di riga dell'errore
 
-	    // TODO: errore a runtime se esiste un tag non valido (quindi qualsiasi stringa
-	    // dopo il tag @ che non sia schema, desc, data, o target genero errore
-
-	    if (!isTagTargetFound) {
-		throw new TrainingDataException("Tag @target non trovato");
-	    }
+	    // Se sono arrivato all'attributo data e non ho trovato questi due parametri,
+	    // andrò in eccezione
 	    if (!isTagDescFound) {
-		throw new TrainingDataException("Tag @desc non trovato");
+		throw new TrainingDataException("Errore nel training set: Tag @desc non trovato");
 	    }
-	    if (explanatorySet[explanatorySet.length - 1] == null) {
-		throw new TrainingDataException(
-			new NoSuchElementException().toString() + ": Numero di tag @desc minore");
+	    if (!isTagTargetFound) {
+		throw new TrainingDataException("Errore nel training set: Tag @target non trovato");
 	    }
 
-	    /*
-	     * - Mancanza dell'attributo schema (fatto)
-	     * 
-	     * - Mancanza dell'attributo @desc (fatto)
-	     * 
-	     * - Mancanza dell'attributo @target (fatto)
-	     * 
-	     * - Mancanza dell'attributo @data (fatto)
-	     * 
-	     * - Numero di attributi diverso da attributi desc (fatto)
-	     * 
-	     * - Valori in data diversi dal valore dell'attributo (fatto)
-	     * 
-	     * - Numero di attributi nel training set diverso dagli attributi specificati
-	     * nel training set (fatto)
-	     * 
-	     * - Valori attributi nel training set diversi dagli attributi specificati
-	     * nell'intestazione del file (EXPLANATORYSET) (Fatto e testato)
-	     * 
-	     * - Attributo di classe non di tipo float.(fatto)
-	     */
+	    // Se il numero di attributi individuato è diverso dal valore di schema
+	    if (explanatorySet.length != iAttribute) {
+		throw new TrainingDataException("Numero di attributi individuati con il tag @desc nel training set "
+			+ "diverso da quello specificato nel parametro @schema");
+	    }
 
 	    // avvalorare numero di esempi
 	    // @data 167
-	    String[] dataRow = line.split(" ");
-	    if (!dataRow[0].equals("@data")) {
-		throw new TrainingDataException(
-			new ArrayIndexOutOfBoundsException().toString() + ": Tag @data non trovato");
-	    } else if (dataRow.length == 0) {
-		throw new TrainingDataException("Numero di esempi non dichiarato");
-	    } else {
-		if (dataRow[1].matches("(-)?[0-9]+")) {
-		    // Se il parametro di data non è un intero, oppure se è intero e minore o uguale
-		    // a 0
-		    if (Integer.parseInt(dataRow[1]) <= 0)
-			throw new TrainingDataException("Il parametro specificato per il tag @data è minore o uguale a 0");
-
-		} else {
-		    throw new TrainingDataException("Il parametro specificato per il tag @data non è numerico.");
+	    String[] dataRow = line.split(" "); // Mi aspetto di trovare una riga di tipo @data <numero>
+	    if (dataRow.length != NUM_PAROLE_RIGA_DATA) {
+		throw new TrainingDataException("Errore nel training set a riga " + rowFileRead
+			+ ": il numero di parole trovate nella riga dell'attributo @data "
+			+ "è diverso da quello atteso.\nRicontrolla la sintassi.\n"
+			+ "Esempio: '@data <valore intero maggiore di 0>'");
+	    } else { // Tag data trovato
+		if (!dataRow[0].equals("@data")) {
+		    throw new TrainingDataException(new ArrayIndexOutOfBoundsException().toString()
+			    + "Errore nel training set a riga " + rowFileRead + ": Tag @data non trovato");
+		}
+		if (!dataRow[1].matches("[1-9][0-9]*")) {
+		    // Se il parametro di data non è un intero positivo
+		    throw new TrainingDataException("Errore nel training set a riga " + rowFileRead
+			    + ": il parametro specificato per il tag @data non è un intero maggiore di 0");
 		}
 	    }
 
 	    numberOfExamples = new Integer(dataRow[1]);
-
 	    // popolare data
 	    data = new Object[numberOfExamples][explanatorySet.length + 1];
 	    short iRow = 0;
@@ -152,20 +157,18 @@ public class Data {
 		// assumo che attributi siano tutti discreti
 		s = line.split(","); // E,E,5,4, 0.28125095
 
-		if (s.length - 1 != explanatorySet.length)
+		if (s.length - 1 != explanatorySet.length) { // Numero di parole lette diverso da @schema + 1
 		    throw new TrainingDataException(
-			    new ArrayIndexOutOfBoundsException().toString() + ": I valori letti in riga " + (iRow + 1)
+			    new ArrayIndexOutOfBoundsException().toString() + ": I valori letti in riga " + rowFileRead
 				    + " sono diversi dal numero di attributi attesi nel file " + fileName);
-
-		if (iRow >= numberOfExamples)
+		}
+		if (iRow >= numberOfExamples) { // Individuato a runtime
 		    throw new TrainingDataException(new ArrayIndexOutOfBoundsException().toString()
-			    + "I valori letti sono diversi dal parametro @data.");
-
-		if (!isDouble(s[s.length - 1]) || s[s.length - 1] == null) {
-		    throw new TrainingDataException("Il valore target specificato nella riga " + (iRow + 1)
-			    + ", colonna " + s.length + " non è di tipo double");
+			    + ": Il numero di esempi nel training set è diverso dal parametro @data.");
 		}
 
+		// Controllo per ogni attributo del training set che sia compreso nella classe
+		// degli attributi relativa.
 		for (int jColumn = 0; jColumn < s.length - 1; jColumn++) {
 		    boolean trovato = false;
 		    int y = 0;
@@ -181,11 +184,16 @@ public class Data {
 		    }
 		    if (!trovato)
 			throw new TrainingDataException("L'attributo '" + s[jColumn] + "' letto nel dataset '"
-				+ fileName + "' nella riga " + (iRow + 1) + ", colonna " + (jColumn + 1)
-				+ "  non è tra gli attributi discreti dichiarati nell'intestazione del file");
+				+ fileName + "' nella riga " + rowFileRead + ", colonna " + (jColumn + 1)
+				+ " non è tra gli attributi discreti dichiarati nell'intestazione del file");
 		    else
 			data[iRow][jColumn] = s[jColumn];
 
+		}
+
+		if (s[s.length - 1].isEmpty() || !isDouble(s[s.length - 1])) {
+		    throw new TrainingDataException("Il valore target specificato nella riga " + (iRow + 1)
+			    + ", colonna " + s.length + " non è di tipo double");
 		}
 
 		data[iRow][s.length - 1] = new Double(s[s.length - 1]);
@@ -193,12 +201,10 @@ public class Data {
 
 	    }
 
-	    if (iRow != numberOfExamples)
-		throw new TrainingDataException("I valori letti sono diversi dal parametro @data.");
+	    if (iRow != numberOfExamples) // Individuato se ho finito il file
+		throw new TrainingDataException("Il numero di esempi nel training set è diverso dal parametro @data.");
 
-	} catch (
-
-	FileNotFoundException e) {
+	} catch (FileNotFoundException e) {
 	    throw new TrainingDataException(e.toString());
 	} finally {
 	    if (sc != null) // Chiudo lo scanner solo se viene trovato il file
