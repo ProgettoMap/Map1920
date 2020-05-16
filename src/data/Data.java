@@ -48,7 +48,8 @@ public class Data {
 			while (!line.contains("@data")) {
 				if (sc.hasNextLine()) { // Finchè ci sono righe nel file
 					s = line.split(" ");
-					if (s[0].equals("@desc") && iAttribute <= explanatorySet.length - 1) { // aggiungo l'attributo allo spazio descrittivo
+					if (s[0].equals("@desc") && iAttribute <= explanatorySet.length - 1) { // aggiungo l'attributo allo
+						// spazio descrittivo
 
 						// @desc motor discrete A,B,C,D,E
 						isTagDescFound = true;
@@ -87,8 +88,6 @@ public class Data {
 			}
 
 			/*
-			 * TODO: gestire l'eccezione dei seguenti casi:
-			 * 
 			 * - Mancanza dell'attributo schema (fatto)
 			 * 
 			 * - Mancanza dell'attributo @desc (fatto)
@@ -99,10 +98,13 @@ public class Data {
 			 * 
 			 * - Numero di attributi diverso da attributi desc (fatto)
 			 * 
-			 * - Valori in data diversi dal valore dell'attributo
+			 * - Valori in data diversi dal valore dell'attributo (fatto)
 			 * 
 			 * - Numero di attributi nel training set diverso dagli attributi specificati
 			 * nel training set (fatto)
+			 * 
+			 * - Valori attributi nel training set diversi dagli attributi specificati
+			 * nell'intestazione del file (EXPLANATORYSET) (Fatto e testato)
 			 * 
 			 * - Attributo di classe non di tipo float.(fatto)
 			 */
@@ -118,19 +120,40 @@ public class Data {
 				line = sc.nextLine();
 				// assumo che attributi siano tutti discreti
 				s = line.split(","); // E,E,5,4, 0.28125095
+				
+				if (s.length - 1 != explanatorySet.length )
+				    throw new TrainingDataException(new ArrayIndexOutOfBoundsException().toString()
+						+ ": I valori letti in riga " + (iRow + 1) + " sono diversi dal numero di attributi attesi nel file "+ fileName);
 
 				if (iRow >= numberOfExamples)
-					throw new TrainingDataException(
-							new ArrayIndexOutOfBoundsException().toString() + "I valori letti sono diversi dal parametro @data.");
-				
-					if (!isDouble(s[s.length - 1]) || s[s.length-1]==null) {
-						throw new TrainingDataException("Valore target non double");
-					}
+					throw new TrainingDataException(new ArrayIndexOutOfBoundsException().toString()
+							+ "I valori letti sono diversi dal parametro @data.");
 
-				for (int jColumn = 0; jColumn < s.length - 1; jColumn++) {					
-					data[iRow][jColumn] = s[jColumn];
+				if (!isDouble(s[s.length - 1]) || s[s.length - 1] == null) {
+					throw new TrainingDataException("Il valore target specificato nella riga " + (iRow + 1) + ", colonna " + s.length + " non è di tipo double");
 				}
 
+				boolean trovato = false;
+				for (int jColumn = 0; jColumn < s.length - 1; jColumn++) {
+					int y = 0;
+					DiscreteAttribute temp = ((DiscreteAttribute) explanatorySet[jColumn]); // TODO: implementare
+					// istanceof quando
+					// inseriremo gli attributi
+					// continui
+					while (y < temp.getNumberOfDistinctValues() && !trovato) {
+						if (s[jColumn].equalsIgnoreCase(temp.getValue(y))) {
+							trovato = true;
+						}
+						y++;
+					}
+					if (!trovato)
+						throw new TrainingDataException("L'attributo '" + s[jColumn] + "' letto nel dataset '"
+								+ fileName + "' nella riga " + (iRow + 1) + ", colonna " + (jColumn + 1)
+								+ "  non è tra gli attributi discreti dichiarati nell'intestazione del file");
+					else
+						data[iRow][jColumn] = s[jColumn];
+
+				}
 
 				data[iRow][s.length - 1] = new Double(s[s.length - 1]);
 				iRow++;
