@@ -1,7 +1,9 @@
 package tree;
 
-import utility.Keyboard;
+import java.util.TreeSet;
+
 import data.Data;
+import utility.Keyboard;
 
 /**
  * Entità albero di decisione come insieme di sotto-alberi
@@ -45,11 +47,11 @@ public class RegressionTree extends Keyboard {
 	 *
 	 * @param Data trainingSet oggetto di classe Data contenente il training set
 	 *             completo
-	 * @param      int begin indice che identifica il sotto-insieme di training
-	 *             coperto dal nodo corrente
-	 * @param      int end indice che identifica il sotto-insieme di training
-	 *             coperto dal nodo corrente
-	 * @param      int numberOfExamplesPerLeaf Numero massimo che una foglia deve
+	 * @param int  begin indice che identifica il sotto-insieme di training coperto
+	 *             dal nodo corrente
+	 * @param int  end indice che identifica il sotto-insieme di training coperto
+	 *             dal nodo corrente
+	 * @param int  numberOfExamplesPerLeaf Numero massimo che una foglia deve
 	 *             contenere
 	 */
 	void learnTree(Data trainingSet, int begin, int end, int numberOfExamplesPerLeaf) {
@@ -94,18 +96,12 @@ public class RegressionTree extends Keyboard {
 	 */
 	SplitNode determineBestSplitNode(Data trainingSet, int begin, int end) {
 
-		DiscreteNode potentialNode = new DiscreteNode(trainingSet, begin, end, trainingSet.getExplanatoryAttribute(0));
-		DiscreteNode temp;
-
-		for (int i = 1; i < trainingSet.getNumberOfExplanatoryAttributes(); i++) {
-			temp = new DiscreteNode(trainingSet, begin, end, trainingSet.getExplanatoryAttribute(i));
-			if (potentialNode.getVariance() > temp.getVariance())
-				potentialNode = temp;
+		TreeSet<SplitNode> ts = new TreeSet<SplitNode>();
+		for (int i = 0; i < trainingSet.getNumberOfExplanatoryAttributes(); i++) {
+			ts.add(new DiscreteNode(trainingSet, begin, end, trainingSet.getExplanatoryAttribute(i)));
 		}
-
-		trainingSet.sort(potentialNode.getAttribute(), begin, end);
-
-		return potentialNode;
+		trainingSet.sort(ts.first().getAttribute(), begin, end);
+		return ts.first();
 	}
 
 	/**
@@ -181,6 +177,7 @@ public class RegressionTree extends Keyboard {
 	 * vengono concatenate anche le informazioni dei rami.
 	 *
 	 */
+	@Override
 	public String toString() {
 
 		String tree = root.toString() + "\n";
@@ -207,11 +204,11 @@ public class RegressionTree extends Keyboard {
 	 *
 	 * @param Data trainingSet - oggetto di classe Data contenente il training set
 	 *             completo
-	 * @param      int indice che identifica il sotto-insieme di training coperto
-	 *             dal nodo corrente
-	 * @param      int indice che identifica il sotto-insieme di training coperto
-	 *             dal nodo corrente
-	 * @param      int Numero minimo che una foglia deve contenere
+	 * @param int  indice che identifica il sotto-insieme di training coperto dal
+	 *             nodo corrente
+	 * @param int  indice che identifica il sotto-insieme di training coperto dal
+	 *             nodo corrente
+	 * @param int  Numero minimo che una foglia deve contenere
 	 *
 	 * @return boolean - Ritorna vero se la partizione data contiene un nodo
 	 *         fogliare, falso altrimenti

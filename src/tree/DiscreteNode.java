@@ -1,5 +1,7 @@
 package tree;
 
+import java.util.ArrayList;
+
 import data.Attribute;
 import data.Data;
 
@@ -15,9 +17,9 @@ class DiscreteNode extends SplitNode {
 	 *
 	 * @param Data      trainingSet - oggetto di classe Data contenente il training
 	 *                  set completo
-	 * @param           int beginExampleIndex - Indice estremo del sotto-insieme di
+	 * @param int       beginExampleIndex - Indice estremo del sotto-insieme di
 	 *                  training
-	 * @param           int endExampleIndex - Indice estremo del sotto-insieme di
+	 * @param int       endExampleIndex - Indice estremo del sotto-insieme di
 	 *                  training
 	 * @param Attribute attribute - Attributo indipendente sul quale si definisce lo
 	 *                  split
@@ -35,10 +37,10 @@ class DiscreteNode extends SplitNode {
 	 *
 	 * @param Data      trainingSet - oggetto di classe Data contenente il training
 	 *                  set completo
-	 * @param           int beginExampleIndex - indice che identifica il
-	 *                  sotto-insieme di training coperto dal nodo corrente
-	 * @param           int endExampleIndex - indice che identifica il sotto-insieme
+	 * @param int       beginExampleIndex - indice che identifica il sotto-insieme
 	 *                  di training coperto dal nodo corrente
+	 * @param int       endExampleIndex - indice che identifica il sotto-insieme di
+	 *                  training coperto dal nodo corrente
 	 * @param Attribute attribute - Attributo indipendente sul quale si definisce lo
 	 *                  split
 	 *
@@ -47,42 +49,43 @@ class DiscreteNode extends SplitNode {
 	void setSplitInfo(Data trainingSet, int beginExampleIndex, int endExampleIndex, Attribute attribute) {
 
 		// TODO: Fare i cast di attribute in DiscreteAttribute
-		int numberOfSplit = getNumberOfSplit(trainingSet, beginExampleIndex, endExampleIndex, attribute);
+		// numberOfSplit non viene più utilizzato in quanto adesso utilizziamo una lista
+		// di stringhe che non può avere dimensione fissa
+		// int numberOfSplit = getNumberOfSplit(trainingSet, beginExampleIndex,
+		// endExampleIndex, attribute);
 		int begin = beginExampleIndex;
 		Object splitValue = trainingSet.getExplanatoryValue(begin, attribute.getIndex());
 		Object explanatoryValue = null;
 
-		mapSplit = new SplitInfo[numberOfSplit];
+		mapSplit = new ArrayList<SplitInfo>();
 
 		int counterSplit = 0;
 
 		for (int x = beginExampleIndex; x <= endExampleIndex; x++) {
 			explanatoryValue = trainingSet.getExplanatoryValue(x, attribute.getIndex());
 			if (!explanatoryValue.equals(splitValue)) {
-				mapSplit[counterSplit] = new SplitInfo(splitValue, begin, x - 1, counterSplit);
+				mapSplit.add(counterSplit, new SplitInfo(splitValue, begin, x - 1, counterSplit));
 				splitValue = explanatoryValue;
 				begin = x;
 				counterSplit++;
 			} else if (x == endExampleIndex)
-				mapSplit[counterSplit] = new SplitInfo(splitValue, begin, endExampleIndex, counterSplit);
+				mapSplit.add(counterSplit, new SplitInfo(splitValue, begin, endExampleIndex, counterSplit));
 		}
 
 	}
 
-	private int getNumberOfSplit(Data trainingSet, int beginExampleIndex, int endExampleIndex, Attribute attribute) {
-
-		int numberOfSplit = 0;
-		Object splitValue = null;
-		Object explanatoryValue = null;
-		for (int i = beginExampleIndex; i < endExampleIndex; i++) {
-			explanatoryValue = trainingSet.getExplanatoryValue(i, attribute.getIndex());
-			if (!explanatoryValue.equals(splitValue)) {
-				splitValue = trainingSet.getExplanatoryValue(i, attribute.getIndex());
-				numberOfSplit++;
-			}
-		}
-		return numberOfSplit;
-	}
+	/*
+	 * non viene più utilizzato per via della lista di dimensioni variabili private
+	 * int getNumberOfSplit(Data trainingSet, int beginExampleIndex, int
+	 * endExampleIndex, Attribute attribute) {
+	 *
+	 * int numberOfSplit = 0; Object splitValue = null; Object explanatoryValue =
+	 * null; for (int i = beginExampleIndex; i < endExampleIndex; i++) {
+	 * explanatoryValue = trainingSet.getExplanatoryValue(i, attribute.getIndex());
+	 * if (!explanatoryValue.equals(splitValue)) { splitValue =
+	 * trainingSet.getExplanatoryValue(i, attribute.getIndex()); numberOfSplit++; }
+	 * } return numberOfSplit; }
+	 */
 
 	/**
 	 * (Implementazione da class abstract): effettua il confronto del valore in
@@ -107,7 +110,7 @@ class DiscreteNode extends SplitNode {
 				return k;
 			k += 1;
 		}
-		//TODO: lanciare eccezione ramo non esistente
+		// TODO: lanciare eccezione ramo non esistente
 		return -1;
 	}
 
@@ -117,6 +120,18 @@ class DiscreteNode extends SplitNode {
 	@Override
 	public String toString() {
 		return "DISCRETE " + super.toString();
+	}
+
+	/**
+	 *  Confronta i valori di splitVariance dei due nodi, restituendone l'esito.
+	 *  0  : valori di gain uguali;
+	 *  -1 : valore di gain minore
+	 *  1  : valore di gain maggiore
+	 */
+	@Override
+	public int compareTo(SplitNode o) {
+		//TODO Fare dei cast?
+		return ((Double)this.getVariance()).compareTo(o.getVariance());
 	}
 
 }

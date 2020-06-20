@@ -1,17 +1,22 @@
 package tree;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import data.Attribute;
 import data.Data;
 
-abstract class SplitNode extends Node {
+abstract class SplitNode extends Node implements Comparable<SplitNode> {
 
 	// NOTE: uno splitNode ha più splitInfo
 
 	Attribute attribute; // oggetto Attribute che modella l'attributo indipendente sul quale lo split è
 	// generato
-	SplitInfo mapSplit[]; // array per memorizzare gli split candidati in una struttura dati di dimensione
+	List<SplitInfo> mapSplit = new ArrayList<SplitInfo>(); // array per memorizzare gli split candidati in una struttura
+															// dati di dimensione
 	// pari ai possibili valori di test
-	double splitVariance; // attributo che contiene il valore di varianza a seguito del partizionamento
+	// TODO: aggiustare visibilità
+	private double splitVariance; // attributo che contiene il valore di varianza a seguito del partizionamento
 	// indotto dallo split corrente
 
 	/**
@@ -27,8 +32,8 @@ abstract class SplitNode extends Node {
 	 *
 	 *
 	 * @param Data      trainingSet
-	 * @param           int beginExampleIndex
-	 * @param           int endExampleIndex
+	 * @param int       beginExampleIndex
+	 * @param int       endExampleIndex
 	 * @param Attribute attribute
 	 */
 	SplitNode(Data trainingSet, int beginExampleIndex, int endExampleIndex, Attribute attribute) {
@@ -40,9 +45,9 @@ abstract class SplitNode extends Node {
 		// compute variance
 
 		splitVariance = 0;
-		for (int i = 0; i < mapSplit.length; i++) {
+		for (int i = 0; i < mapSplit.size(); i++) {
 
-			double localVariance = new LeafNode(trainingSet, mapSplit[i].getBeginindex(), mapSplit[i].getEndIndex())
+			double localVariance = new LeafNode(trainingSet, mapSplit.get(i).getBeginindex(), mapSplit.get(i).getEndIndex())
 					.getVariance();
 			splitVariance += (localVariance);
 
@@ -57,9 +62,9 @@ abstract class SplitNode extends Node {
 	 * split candidati (in mapSplit[])
 	 *
 	 * @param Data      trainingSet
-	 * @param           int beginExampleIndex - indici estremi del sotto-insieme di
+	 * @param int       beginExampleIndex - indici estremi del sotto-insieme di
 	 *                  training
-	 * @param           int endExampleIndex - indici estremi del sotto-insieme di
+	 * @param int       endExampleIndex - indici estremi del sotto-insieme di
 	 *                  training
 	 * @param Attribute attribute - attributo indipendente sul quale si definisce lo
 	 *                  split
@@ -95,6 +100,8 @@ abstract class SplitNode extends Node {
 	 * @return double splitVariance - attributo che contiene il valore di varianza a
 	 *         seguito del partizionamento
 	 */
+
+	@Override
 	double getVariance() {
 		return splitVariance;
 	}
@@ -104,8 +111,9 @@ abstract class SplitNode extends Node {
 	 *
 	 * @return int - numeri di figli di un nodo di split
 	 */
+	@Override
 	int getNumberOfChildren() {
-		return mapSplit.length;
+		return mapSplit.size();
 	}
 
 	/**
@@ -116,7 +124,7 @@ abstract class SplitNode extends Node {
 	 *         tipo SplitNode
 	 */
 	SplitInfo getSplitInfo(int child) {
-		return mapSplit[child];
+		return mapSplit.get(child);
 	}
 
 	/**
@@ -129,8 +137,8 @@ abstract class SplitNode extends Node {
 	 */
 	String formulateQuery() {
 		String query = "";
-		for (int i = 0; i < mapSplit.length; i++)
-			query += (i + ":" + attribute + mapSplit[i].getComparator() + mapSplit[i].getSplitValue()) + "\n";
+		for (int i = 0; i < mapSplit.size(); i++)
+			query += (i + ":" + attribute + mapSplit.get(i).getComparator() + mapSplit.get(i).getSplitValue()) + "\n";
 		return query;
 	}
 
@@ -141,13 +149,14 @@ abstract class SplitNode extends Node {
 	 * @return String - Informazioni concatenate (attributo, esempi coperti,
 	 *         varianza, varianza di Split) di ciascun test
 	 */
+	@Override
 	public String toString() {
 
 		String v = "SPLIT : attribute=" + attribute + " Nodo: " + super.toString() + " Split Variance: " + getVariance()
 				+ "\n";
 
-		for (int i = 0; i < mapSplit.length; i++) {
-			v += "\t" + mapSplit[i] + "\n";
+		for (int i = 0; i < mapSplit.size(); i++) {
+			v += "\t" + mapSplit.get(i) + "\n";
 		}
 
 		return v;
@@ -183,12 +192,12 @@ abstract class SplitNode extends Node {
 		 *
 		 * @param Object splitValue - valore di tipo Object (di un attributo
 		 *               indipendente) che definisce uno split
-		 * @param        int beginIndex -indice che identifica il sotto-insieme di
-		 *               training coperto dal nodo corrente
-		 * @param        int endIndex - indice che identifica il sotto-insieme di
-		 *               training coperto dal nodo corrente
-		 * @param        int numberChild - numero di split (nodi figli) originanti dal
-		 *               nodo corrente
+		 * @param int    beginIndex -indice che identifica il sotto-insieme di training
+		 *               coperto dal nodo corrente
+		 * @param int    endIndex - indice che identifica il sotto-insieme di training
+		 *               coperto dal nodo corrente
+		 * @param int    numberChild - numero di split (nodi figli) originanti dal nodo
+		 *               corrente
 		 */
 		SplitInfo(Object splitValue, int beginIndex, int endIndex, int numberChild) {
 
@@ -204,12 +213,12 @@ abstract class SplitNode extends Node {
 		 *
 		 * @param Object splitValue - valore di tipo Object (di un attributo
 		 *               indipendente) che definisce uno split
-		 * @param        int beginIndex -indice che identifica il sotto-insieme di
-		 *               training coperto dal nodo corrente
-		 * @param        int endIndex - indice che identifica il sotto-insieme di
-		 *               training coperto dal nodo corrente
-		 * @param        int numberChild - numero di split (nodi figli) originanti dal
-		 *               nodo corrente
+		 * @param int    beginIndex -indice che identifica il sotto-insieme di training
+		 *               coperto dal nodo corrente
+		 * @param int    endIndex - indice che identifica il sotto-insieme di training
+		 *               coperto dal nodo corrente
+		 * @param int    numberChild - numero di split (nodi figli) originanti dal
+		 *               nodocorrente
 		 * @param String comparator - operatore matematico che definisce il test nel
 		 *               nodo corrente (“=” per valori discreti)
 		 */
@@ -255,6 +264,7 @@ abstract class SplitNode extends Node {
 		 * @return String - Stringa contenente i valori di beginExampleIndex,
 		 *         endExampleIndex, child, splitValue, comparator concatenati.
 		 */
+		@Override
 		public String toString() {
 			return "child " + numberChild + " split value" + comparator + splitValue + "[Examples:" + beginIndex + "-"
 					+ endIndex + "]";

@@ -7,14 +7,14 @@ import tree.UnknownValueException;
 import utility.Keyboard;
 /*
  * TODO: ricontrollare tutte le visibilità di attributi, metodi e classi
- * TODO: Ricontrollare tutte le possibili eccezioni 
+ * TODO: Ricontrollare tutte le possibili eccezioni
  */
 
 class MainTest extends Keyboard {
 
     public static void main(String[] args) throws TrainingDataException, UnknownValueException, FileNotFoundException {
 
-	System.out.println("Training set:\n");
+	System.out.println("Training set: ");
 
 	String fileName = Keyboard.readString();
 	try {
@@ -44,9 +44,9 @@ class MainTest extends Keyboard {
 		} while (!responseValid);
 
 	    } while (response.equals("y"));
-	    
+
 	    System.out.println("Shutting down the program, and leaving the control to the operative system...");
-	    
+
 	} catch (TrainingDataException e) {
 	    System.out.println(e);
 	}
