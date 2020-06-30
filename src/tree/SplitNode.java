@@ -1,12 +1,14 @@
 package tree;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import data.Attribute;
 import data.Data;
 
-abstract class SplitNode extends Node implements Comparable<SplitNode> {
+@SuppressWarnings("serial")
+abstract class SplitNode extends Node implements Comparable<SplitNode>, Serializable {
 
 	// NOTE: uno splitNode ha più splitInfo
 
@@ -175,7 +177,7 @@ abstract class SplitNode extends Node implements Comparable<SplitNode> {
 	 * A,B,C,D,E Descrizione: pgain | Valori: 3,4,5,6 Descrizione: vgain | Valori:
 	 * 1,2,3,4,5
 	 */
-	class SplitInfo {
+	class SplitInfo implements Serializable {
 
 		Object splitValue; // valore di tipo Object (di un attributo indipendente) che definisce uno split
 		// NOTE: valore descrittivo del nodo (Stringa,

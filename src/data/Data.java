@@ -2,6 +2,7 @@ package data;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -10,12 +11,14 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * Modella l'insieme di esempi di training
+ * Modella l'insieme di esempi di apprendimento
  */
-public class Data {
+@SuppressWarnings("serial")
+public class Data implements Serializable {
 
 	private static final int NUM_PAROLE_RIGA_SCHEMA = 2;
-	private static final int NUM_PAROLE_RIGA_DESC = 3;
+	private static final int NUM_PAROLE_RIGA_DESC_CONTINUOUS = 2;
+	private static final int NUM_PAROLE_RIGA_DESC_DISCRETE = 3;
 	private static final int NUM_PAROLE_RIGA_TARGET = 2;
 	private static final int NUM_PAROLE_RIGA_DATA = 2;
 
@@ -33,8 +36,6 @@ public class Data {
 	private ContinuousAttribute classAttribute; // Oggetto per modellare l'attributo di classe ContinuousAttribute
 
 	public Data(String fileName) throws TrainingDataException {
-
-		System.out.println("Starting data acquisition phase:\n");
 
 		boolean isTagTargetFound = false;
 		boolean isTagDescFound = false;
@@ -75,25 +76,28 @@ public class Data {
 				if (sc.hasNextLine()) {
 					s = line.split(" ");
 
-					if (s[0].equals("@desc") && iAttribute <= explanatorySetSize - 1) {
+					if (s[0].equals("@desc") && iAttribute <= explanatorySetSize - 1) { // ciclo fino al numero di
+																						// attributi
 						// aggiungo l'attributo allo spazio descrittivo
 						// @desc motor discrete A,B,C,D,E
 						if (!isTagDescFound)
 							isTagDescFound = true;
 
-						if (s.length != NUM_PAROLE_RIGA_DESC) {
+						if (s.length != NUM_PAROLE_RIGA_DESC_CONTINUOUS && s.length != NUM_PAROLE_RIGA_DESC_DISCRETE) {
 							throw new TrainingDataException("Errore nel training set a riga " + rowFileRead
 									+ ": il numero di parole trovate nella riga è diverso da quello atteso.\n"
 									+ "Ricontrolla la sintassi.\n"
 									+ "Esempio: '@desc <nome attributo> <valori attributi separati da virgola>' ");
 						}
 
-						Set<String> discreteValues = new TreeSet<String>();
-						for (String string : s[2].split(",")) {
-							discreteValues.add(string);
-						}
-
-						explanatorySet.add(iAttribute, new DiscreteAttribute(s[1], iAttribute, discreteValues));
+						if (s.length >= 3) { // Attributi discreti
+							Set<String> discreteValues = new TreeSet<String>();
+							for (String string : s[2].split(",")) {
+								discreteValues.add(string);
+							}
+							explanatorySet.add(iAttribute, new DiscreteAttribute(s[1], iAttribute, discreteValues));
+						} else
+							explanatorySet.add(iAttribute, new ContinuousAttribute(s[1], iAttribute));
 						iAttribute++;
 
 					} else if (s[0].equals("@target")) {
@@ -122,7 +126,7 @@ public class Data {
 			}
 
 			// Se sono arrivato all'attributo data e non ho trovato questi due parametri,
-			// andrò in eccezione
+			// scateno un'eccezione
 			if (!isTagDescFound) {
 				throw new TrainingDataException("Errore nel training set: Tag @desc non trovato");
 			}
@@ -164,7 +168,6 @@ public class Data {
 				line = sc.nextLine();
 				rowFileRead++;
 
-				// assumo che attributi siano tutti discreti
 				s = line.split(","); // E,E,5,4, 0.28125095
 
 				if (s.length - 1 != explanatorySet.size()) { // Numero di parole lette diverso da @schema + 1
@@ -182,22 +185,25 @@ public class Data {
 				for (int jColumn = 0; jColumn < s.length - 1; jColumn++) {
 					boolean trovato = false;
 					int y = 0;
-					DiscreteAttribute temp = ((DiscreteAttribute) explanatorySet.get(jColumn)); // TODO: implementare
-					// istanceof quando
-					// inseriremo gli attributi
-					// continui
-					while (y < temp.getNumberOfDistinctValues() && !trovato) {
-						if (s[jColumn].equalsIgnoreCase(temp.getValue(y))) {
-							trovato = true;
+
+					Attribute tempAttr = explanatorySet.get(jColumn);
+					if (tempAttr instanceof DiscreteAttribute) {
+						DiscreteAttribute temp = ((DiscreteAttribute) tempAttr);
+
+						while (y < temp.getNumberOfDistinctValues() && !trovato) {
+							if (s[jColumn].equalsIgnoreCase(temp.getValue(y))) {
+								trovato = true;
+							}
+							y++;
 						}
-						y++;
-					}
-					if (!trovato)
-						throw new TrainingDataException("L'attributo '" + s[jColumn] + "' letto nel dataset '"
-								+ fileName + "' nella riga " + rowFileRead + ", colonna " + (jColumn + 1)
-								+ " non è tra gli attributi discreti dichiarati nell'intestazione del file");
-					else
+						if (!trovato)
+							throw new TrainingDataException("L'attributo '" + s[jColumn] + "' letto nel dataset '"
+									+ fileName + "' nella riga " + rowFileRead + ", colonna " + (jColumn + 1)
+									+ " non è tra gli attributi discreti dichiarati nell'intestazione del file");
 						data[iRow][jColumn] = s[jColumn];
+					} else {
+						data[iRow][jColumn] = Double.parseDouble(s[jColumn]);
+					}
 
 				}
 
@@ -331,14 +337,47 @@ public class Data {
 		}
 		swap(inf, j);
 		return j;
+	}
 
+	/*
+	 * Partiziona il vettore rispetto all'elemento x e restiutisce il punto di
+	 * separazione
+	 */
+	private int partition(ContinuousAttribute attribute, int inf, int sup) {
+		int i, j;
+
+		i = inf;
+		j = sup;
+		int med = (inf + sup) / 2;
+		// TODO: cosa andava fatto? Non riusciva a fare cast da object a string / double
+
+		// PROF:
+		// Double x = (Double) getExplanatoryValue(med, attribute.getIndex());
+
+		Double x = (Double) getExplanatoryValue(med, attribute.getIndex());
+		swap(inf, med);
+
+		while (true) {
+			while (i <= sup && ((Double) getExplanatoryValue(i, attribute.getIndex())).compareTo(x) <= 0) {
+				i++;
+			}
+
+			while (((Double) getExplanatoryValue(j, attribute.getIndex())).compareTo(x) > 0) {
+				j--;
+			}
+
+			if (i < j) {
+				swap(i, j);
+			} else
+				break;
+		}
+		swap(inf, j);
+		return j;
 	}
 
 	/*
 	 * Algoritmo quicksort per l'ordinamento di un array di interi A usando come
 	 * relazione d'ordine totale "<="
-	 *
-	 * @param A
 	 */
 	private void quicksort(Attribute attribute, int inf, int sup) {
 
@@ -346,7 +385,10 @@ public class Data {
 
 			int pos;
 
-			pos = partition((DiscreteAttribute) attribute, inf, sup);
+			if (attribute instanceof DiscreteAttribute)
+				pos = partition((DiscreteAttribute) attribute, inf, sup);
+			else
+				pos = partition((ContinuousAttribute) attribute, inf, sup);
 
 			if ((pos - inf) < (sup - pos + 1)) {
 				quicksort(attribute, inf, pos - 1);
@@ -360,6 +402,7 @@ public class Data {
 
 	}
 
+
 	/**
 	 * Restituisce l'attributo indicizzato da index in explanatorySet[]
 	 *
@@ -372,29 +415,11 @@ public class Data {
 	}
 
 	/**
-	 * @return Oggetto corrispondente all'attributo di classe
+	 * Restituisce l'oggetto corrispondente all'attributo di classe
 	 */
-	@SuppressWarnings("unused")
 	private ContinuousAttribute getClassAttribute() {
 		return classAttribute;
 	}
-
-//    /**
-//     * Consente il test delle classi implementate, in particolare permette la stampa
-//     * degli esempi ordinati per valori di attributo
-//     */
-//    public static void main(String args[]) throws FileNotFoundException {
-//	Data trainingSet = new Data("servo.dat");
-//	System.out.println(trainingSet);
-//
-//	for (int jColumn = 0; jColumn < trainingSet.getNumberOfExplanatoryAttributes(); jColumn++) {
-//	    System.out.println("ORDER BY " + trainingSet.getExplanatoryAttribute(jColumn).toString());
-//	    trainingSet.quicksort(trainingSet.getExplanatoryAttribute(jColumn), 0,
-//		    trainingSet.getNumberOfExamples() - 1);
-//	    System.out.println(trainingSet);
-//	}
-//
-//    }
 
 	private boolean isDouble(String value) {
 		try {

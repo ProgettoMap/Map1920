@@ -1,17 +1,20 @@
 package data;
 
+import java.io.Serializable;
+
 /**
  * La classe modella un generico attributo discreto o continuo.
- * 
+ *
  */
-public abstract class Attribute {
+@SuppressWarnings("serial")
+public abstract class Attribute implements Serializable {
 
 	private String name; // Nome simbolico dell'attributo
 	private int index; // Identificativo numerico dell'attributo
 
 	/**
 	 * E' il costruttore di classe. Inizializza i valori dei membri name, index
-	 * 
+	 *
 	 * @param name
 	 * @param index
 	 */
@@ -24,7 +27,7 @@ public abstract class Attribute {
 
 	/**
 	 * Restituisce il valore nel membro name;
-	 * 
+	 *
 	 * @return name
 	 */
 	String getName() {
@@ -33,7 +36,7 @@ public abstract class Attribute {
 
 	/**
 	 * Restituisce il valore nel membro index;
-	 * 
+	 *
 	 * @return index
 	 */
 	public int getIndex() {

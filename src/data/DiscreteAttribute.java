@@ -1,5 +1,6 @@
 package data;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -8,7 +9,8 @@ import java.util.TreeSet;
  * Rappresenta un attributo discreto
  */
 //NOTE: Attributi nominali (es. A, B, C...)
-public class DiscreteAttribute extends Attribute implements Iterable<String> {
+@SuppressWarnings("serial")
+public class DiscreteAttribute extends Attribute implements Iterable<String>, Serializable {
 
 	// Rappresenta l'insieme di valori discreti che l'attributo può assumere
 	private Set<String> values = new TreeSet<String>(); // order by asc

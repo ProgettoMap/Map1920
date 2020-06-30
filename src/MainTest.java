@@ -1,4 +1,4 @@
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import data.Data;
 import data.TrainingDataException;
@@ -8,53 +8,67 @@ import utility.Keyboard;
 /*
  * TODO: ricontrollare tutte le visibilità di attributi, metodi e classi
  * TODO: Ricontrollare tutte le possibili eccezioni
+ * TODO: Ricontrollare se le classi implementano correttamente Serializable
  */
 
 class MainTest extends Keyboard {
 
-    public static void main(String[] args) throws TrainingDataException, UnknownValueException, FileNotFoundException {
+	public static void main(String[] args){
 
-	System.out.println("Training set: ");
-
-	String fileName = Keyboard.readString();
-	try {
-
-	    Data trainingSet = new Data(fileName);
-	    RegressionTree tree = new RegressionTree(trainingSet);
-	    tree.printRules();
-	    tree.printTree();
-	    String response;
-
-	    boolean responseValid = false;
-	    System.out.println("Starting prediction phase!");
-
-	    do {
-		try {
-		    System.out.println(tree.predictClass());
-		} catch (UnknownValueException e) {
-		    System.out.println(e);
-		}
+		int decision;
 		do {
-		    System.out.println("Would you want to repeat? (y/n):\n");
-		    response = Keyboard.readString();
+			System.out.println("Learn Regression Tree from data [1]");
+			System.out.println("Load Regression Tree from archive [2]");
+			decision = Keyboard.readInt();
+		} while (!(decision == 1) && !(decision == 2));
 
-		    responseValid = response.length() == 1 && isValidResponse(response.charAt(0));
-		    if (!responseValid)
-			System.out.println("Character not valid. Retry please");
-		} while (!responseValid);
+		String trainingfileName = "";
+		System.out.println("File name:");
+		trainingfileName = Keyboard.readString();
 
-	    } while (response.equals("y"));
+		RegressionTree tree = null;
+		if (decision == 1) {
+			System.out.println("Starting data acquisition phase!");
+			Data trainingSet = null;
+			try {
 
-	    System.out.println("Shutting down the program, and leaving the control to the operative system...");
+				trainingSet = new Data(trainingfileName + ".dat");
+			} catch (TrainingDataException e) {
+				System.out.println(e);
+				return;
+			}
 
-	} catch (TrainingDataException e) {
-	    System.out.println(e);
+			System.out.println("Starting learning phase!");
+			tree = new RegressionTree(trainingSet);
+			try {
+				tree.salva(trainingfileName + ".dmp");
+			} catch (IOException e) {
+				System.out.println(e.toString());
+			}
+		} else
+			try {
+				tree = RegressionTree.carica(trainingfileName + ".dmp");
+			} catch (ClassNotFoundException | IOException e) {
+				System.out.print(e);
+				return;
+			}
+		tree.printRules();
+		tree.printTree();
+
+		char risp = 'y';
+		do {
+			System.out.println("Starting prediction phase!");
+			try {
+				System.out.println(tree.predictClass());
+			} catch (UnknownValueException e) {
+
+				System.out.println(e);
+			}
+			System.out.println("Would you repeat ? (y/n)");
+			risp = Keyboard.readChar();
+
+		} while (Character.toUpperCase(risp) == 'Y');
+
 	}
-
-    }
-
-    private static boolean isValidResponse(Character response) {
-	return (response == 'y' || response == 'n');
-    }
 
 }

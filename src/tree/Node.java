@@ -1,8 +1,11 @@
 package tree;
 
+import java.io.Serializable;
+
 import data.Data;
 
-abstract class Node {
+@SuppressWarnings("serial")
+abstract class Node implements Serializable {
 
 	static int idNodeCount = 0; // contatore dei nodi generati nell'albero
 	private int idNode; // identificativo numerico del nodo
@@ -114,6 +117,7 @@ abstract class Node {
 	 * endExampleIndex, variance e restituisce la stringa finale.
 	 *
 	 */
+	@Override
 	public String toString() {
 		return ("[Examples: " + beginExampleIndex + "-" + endExampleIndex + "] variance:" + variance);
 	}

@@ -1,21 +1,24 @@
 package tree;
 
+import java.io.Serializable;
+
 import data.Data;
 
 /**
  * Entità Nodo fogliare
  */
-class LeafNode extends Node {
+@SuppressWarnings("serial")
+class LeafNode extends Node implements Serializable{
 
 	Double predictedClassValue; // valore dell'attributo di classe espresso nella foglia corrente
 
 	/**
 	 * Istanzia un oggetto invocando il costruttore della superclasse
-	 * 
+	 *
 	 * Avvalora l'attributo predictedClassValue (come media dei valori
 	 * dell’attributo di classe che ricadono nella partizione -- ossia la porzione
 	 * di trainingSet compresa tra beginExampleIndex e endExampleIndex)
-	 * 
+	 *
 	 * @param Data trainingSet - oggetto di classe Data contenente il training set
 	 *             completo
 	 * @param      int beginExampleIndex - indice che identifica il sotto-insieme di
@@ -46,7 +49,7 @@ class LeafNode extends Node {
 
 	/**
 	 * Restituisce il valore dell'attributo predictedClassValue
-	 * 
+	 *
 	 * @return double predictedClassValue
 	 */
 	public Double getPredictedClassValue() {

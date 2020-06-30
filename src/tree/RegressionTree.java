@@ -1,15 +1,26 @@
 package tree;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.TreeSet;
 
+import data.Attribute;
+import data.ContinuousAttribute;
 import data.Data;
+import data.DiscreteAttribute;
 import utility.Keyboard;
 
 /**
  * Entità albero di decisione come insieme di sotto-alberi
  *
  */
-public class RegressionTree extends Keyboard {
+@SuppressWarnings("serial")
+public class RegressionTree extends Keyboard implements Serializable {
 
 	Node root; // radice del sotto-albero corrente
 	RegressionTree childTree[]; // array di sotto-alberi originanti nel nodo root.
@@ -94,12 +105,24 @@ public class RegressionTree extends Keyboard {
 	 *              nodo corrente
 	 * @return SplitNode - nodo di split migliore per il sotto-insieme di training
 	 */
-	SplitNode determineBestSplitNode(Data trainingSet, int begin, int end) {
+	private SplitNode determineBestSplitNode(Data trainingSet, int begin, int end) {
 
 		TreeSet<SplitNode> ts = new TreeSet<SplitNode>();
+		SplitNode currentNode = null;
 		for (int i = 0; i < trainingSet.getNumberOfExplanatoryAttributes(); i++) {
-			ts.add(new DiscreteNode(trainingSet, begin, end, trainingSet.getExplanatoryAttribute(i)));
+
+			Attribute a = trainingSet.getExplanatoryAttribute(i);
+
+			if (a instanceof DiscreteAttribute) {
+				DiscreteAttribute attribute = (DiscreteAttribute) a;
+				currentNode = new DiscreteNode(trainingSet, begin, end, attribute);
+			} else { // Attributo continuo
+				ContinuousAttribute attribute = (ContinuousAttribute) a;
+				currentNode = new ContinuousNode(trainingSet, begin, end, attribute);
+			}
+			ts.add(currentNode);
 		}
+
 		trainingSet.sort(ts.first().getAttribute(), begin, end);
 		return ts.first();
 	}
@@ -186,7 +209,6 @@ public class RegressionTree extends Keyboard {
 
 		} else // split node
 		{
-
 			for (int i = 0; i < childTree.length; i++)
 				tree += childTree[i];
 		}
@@ -248,5 +270,43 @@ public class RegressionTree extends Keyboard {
 			else
 				return childTree[risp].predictClass();
 		}
+	}
+
+	/**
+	 * Serializza l'albero in un file
+	 *
+	 * @param string Nome del file in cui salvare l'albero
+	 *
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	public void salva(String nomeFile) throws FileNotFoundException, IOException {
+		FileOutputStream fileOut = new FileOutputStream(nomeFile);
+		ObjectOutputStream out = new ObjectOutputStream(fileOut);
+		out.writeObject(this.root);
+		out.writeObject(this.childTree);
+		out.close();
+		fileOut.close();
+	}
+
+	/**
+	 * Carica un albero di regressione salvato in un file
+	 *
+	 * @param nomeFile - Nome del file in cui è salvato l'albero
+	 * @return RegressionTree - Albero contenuto nel file
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
+	public static RegressionTree carica(String nomeFile)
+			throws FileNotFoundException, IOException, ClassNotFoundException {
+		FileInputStream fileIn = new FileInputStream(nomeFile);
+		ObjectInputStream in = new ObjectInputStream(fileIn);
+		RegressionTree tree = new RegressionTree();
+		tree.root = (Node) in.readObject();
+		tree.childTree = (RegressionTree[]) in.readObject();
+		in.close();
+		fileIn.close();
+		return tree;
 	}
 }

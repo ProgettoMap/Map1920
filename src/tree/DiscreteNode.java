@@ -1,5 +1,6 @@
 package tree;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import data.Attribute;
@@ -8,7 +9,8 @@ import data.Data;
 /**
  * Entità nodo di split relativo ad un attributo indipendente discreto
  */
-class DiscreteNode extends SplitNode {
+@SuppressWarnings("serial")
+class DiscreteNode extends SplitNode implements Serializable {
 
 	/**
 	 *
@@ -102,6 +104,7 @@ class DiscreteNode extends SplitNode {
 	 */
 	@Override
 	int testCondition(Object value) {
+		//TODO: perchè non viene mai utilizzato?
 
 		String valueStr = (String) value;
 		int k = 0;
@@ -110,7 +113,6 @@ class DiscreteNode extends SplitNode {
 				return k;
 			k += 1;
 		}
-		// TODO: lanciare eccezione ramo non esistente
 		return -1;
 	}
 
@@ -130,7 +132,6 @@ class DiscreteNode extends SplitNode {
 	 */
 	@Override
 	public int compareTo(SplitNode o) {
-		//TODO Fare dei cast?
 		return ((Double)this.getVariance()).compareTo(o.getVariance());
 	}
 
