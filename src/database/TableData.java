@@ -37,23 +37,25 @@ public class TableData {
 
 		String query = "SELECT ";
 
-		for (int i = 0; i < tSchema.getNumberOfAttributes(); i++) {
+		int countAttributes =  tSchema.getNumberOfAttributes();
+		for (int i = 0; i < countAttributes; i++) {
 			Column c = tSchema.getColumn(i);
 			if (i > 0)
 				query += ",";
 			query += c.getColumnName();
 		}
-		if (tSchema.getNumberOfAttributes() == 0)
-			throw new SQLException();
+		if (countAttributes == 0)
+			throw new SQLException("[!] Errore! [!] La tabella " + table + "ha " + countAttributes
+			+ " colonne, non necessarie per effettuare l'apprendimento dell'albero.");
 		query += (" FROM " + table);
 
 		statement = db.getConnection().createStatement();
 		ResultSet rs = statement.executeQuery(query);
 		boolean empty = true;
-		while (rs.next()) {
+		while (rs.next()) { // Per ogni riga
 			empty = false;
 			Example currentTuple = new Example();
-			for (int i = 0; i < tSchema.getNumberOfAttributes(); i++)
+			for (int i = 0; i < countAttributes; i++)
 				if (tSchema.getColumn(i).isNumber())
 					currentTuple.add(rs.getDouble(i + 1));
 				else
@@ -63,7 +65,8 @@ public class TableData {
 		rs.close();
 		statement.close();
 		if (empty)
-			throw new EmptySetException();
+			throw new EmptySetException("La tabella " + table
+					+ " ha 0 righe, pertanto è vuota. Inserisci prima dei dati al suo interno!");
 
 		return transSet;
 	}
@@ -88,7 +91,7 @@ public class TableData {
 		ResultSet r = db.getConnection().createStatement().executeQuery("SELECT DISTINCT " + column.getColumnName() + " FROM " + table + " ORDER BY " //TODO: Teoricamente se usiamo un treeset, l'ordinamento dovrebbe avvenire automaticamnete
 				+ column.getColumnName() + " ASC");
 		while (r.next()) {
-			discreteValues.add(r.getString(0));
+			discreteValues.add(r.getString(1));
 		}
 		return discreteValues;
 	}

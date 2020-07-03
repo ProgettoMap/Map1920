@@ -19,7 +19,7 @@ public class DbAccess {
 	private Connection conn; // gestisce una connessione
 
 	public DbAccess() {
-
+		// Empty constructor
 	}
 
 	public void initConnection() throws DatabaseConnectionException {

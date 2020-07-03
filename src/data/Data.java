@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -13,8 +14,10 @@ import java.util.Set;
 import database.Column;
 import database.DatabaseConnectionException;
 import database.DbAccess;
+import database.EmptySetException;
 import database.Example;
 import database.TableData;
+import database.TableSchema;
 
 /**
  * Modella l'insieme di esempi di apprendimento
@@ -60,297 +63,61 @@ public class Data implements Serializable {
 		Connection conn = db.getConnection();
 		Statement s = null;
 		try {
-			s = conn.createStatement();
-			ResultSet r = s.executeQuery("SHOW TABLES LIKE " + tableName);
+			s = conn.createStatement(); // Controllo se esiste la tabella...
+			ResultSet r = s.executeQuery("SHOW TABLES LIKE '" + tableName + "'");
 			if (r.next() == false) {
 				// TODO: testare!
 				throw new TrainingDataException("La tabella " + tableName + "non esiste.");
 			}
-			r = s.executeQuery(
-					"SELECT count(*) FROM information_schema.columns" + " WHERE table_name = '" + tableName + "'");
-			int countColumns = r.getInt(0);
 
-			if (countColumns <= 2) {
-				throw new TrainingDataException("[!] Errore! [!] La tabella " + tableName + "ha " + r.getInt(0)
-						+ " colonne, non necessarie per effettuare l'apprendimento dell'albero.");
-			}
+			TableSchema ts = new TableSchema(db, tableName);
 
-			r = s.executeQuery("SELECT count(*) FROM table_name = '" + tableName + "'");
-			int countRows = r.getInt(0);
-			if (countRows == 0) {
-				throw new TrainingDataException("[!] Errore! [!] La tabella " + tableName
-						+ " ha 0 righe, pertanto è vuota. Inserisci prima dei dati al suo interno!");
-			}
-
-			r = s.executeQuery("SELECT * FROM table_name = '" + tableName + "'");
-
-			ArrayList<Column> columns = new ArrayList<Column>();
-
-			r = s.executeQuery("SHOW columns FROM " + tableName);
-			while (r.next()) {
-				columns.add(new Column(r.getString(1), r.getString(2)));
-			}
-
-			if (!columns.get(columns.size()).isNumber()) {
+			//Controlliamo se il target è un valore numerico
+			if ( ! ts.getColumn(ts.getNumberOfAttributes() - 1).isNumber() ) {
 				throw new TrainingDataException(
-						"[!] Errore! [!] La colonna contenente l'attributo di classe non è di tipo numerico.");
+					"[!] Errore! [!] La colonna contenente l'attributo di classe non è di tipo numerico.");
 			}
 
 			short iAttribute = 0;
-
-			for (Column c : columns) {
+			Iterator<Column> iter = ts.iterator();
+			while(iter.hasNext()) {
+				Column c = iter.next();
 				if (isDiscreteAttributeType(c)) { // Attributi discreti
 					Set<String> discreteValues = td.getDistinctColumnValues(tableName, c);
 
 					explanatorySet.add(iAttribute,
 							new DiscreteAttribute(c.getColumnName(), iAttribute, discreteValues));
-				} else if (isContinuousAttributeType(c)) { // Attributo continuo
+				} else if ( ! isClassAttributeType(c) && isContinuousAttributeType(c)) { // Attributo continuo
 					explanatorySet.add(iAttribute, new ContinuousAttribute(c.getColumnName(), iAttribute));
-				} else if (isClassAttributeType(c)) { // Attributo di classe
+				} else { // Attributo di classe
 					classAttribute = new ContinuousAttribute(c.getColumnName(), iAttribute);
 				}
 				iAttribute++;
 			}
+			// TODO: controllare un certo for -> for (int jColumn = 0; jColumn < s.length -
+			// 1; jColumn++) e sostituirlo con un foreach su tutte le colonne in
+			// explanatoryset come qui sotto
 
-			r = s.executeQuery("SELECT * FROM '" + tableName + "'"); // Select su tutte le righe della tabella
-			while (r.next()) {
-				// TODO: controllare un certo for -> for (int jColumn = 0; jColumn < s.length -
-				// 1; jColumn++) e sostituirlo con un foreach su tutte le colonne in
-				// explanatoryset come qui sotto
-				Example tempExample = new Example();
-				for (Attribute a : explanatorySet) {
-					if (a instanceof DiscreteAttribute) {
-						DiscreteAttribute temp = ((DiscreteAttribute) a);
-						tempExample.add(r.getString(temp.getIndex()));
-					} else if (a instanceof ContinuousAttribute) {
-						ContinuousAttribute temp = ((ContinuousAttribute) a);
-						tempExample.add(r.getFloat(temp.getIndex()));
-					}
-				}
-				data.add(tempExample);
+			try {
+				data = td.getTransazioni(tableName);
+				numberOfExamples = data.size();
+			} catch (EmptySetException e) {
+				new TrainingDataException("[!] Errore! [!] Errore nel training set: " + e);
 			}
 		} catch (SQLException e) {
-			throw new TrainingDataException("[!] Errore! [!] Non è stato possibile creare la connessione con il database.");
+			throw new TrainingDataException("[!] Errore! [!] La query specificata non è corretta.\nErrore: " + e);
 		} // TODO: finally chiudere stream
 		finally {
 			//db.closeConnection();
 		}
 	}
 
-//	  public Data(String fileName) throws TrainingDataException {
-//
-//     boolean isTagTargetFound = false;
-//     boolean isTagDescFound = false;
-//
-//     File inFile = new File(fileName);
-//     Scanner sc = null;
-//     int rowFileRead = 0; //
-//     Righe lette(necessario per indicare l 'errore nel file) try {
-//			sc = new Scanner(inFile);
-//	 		String line = sc.nextLine(); // Leggo la prima riga
-//         	rowFileRead++; // Incremento numero righe lette
-//
-//         	String s[] = line.split(" ");
-//         	if (s.length != NUM_PAROLE_RIGA_SCHEMA) {
-//             throw
-//             new TrainingDataException("Errore nel training set a riga " + rowFileRead +
-//                 ": il numero di parole trovate nella riga è diverso da quello atteso.\n" +
-//                 "Ricontrolla la sintassi.\nEsempio: '@schema <numero intero positivo maggiore di 0>'"
-//             );
-//         }
-//
-//         if (!s[0].equals("@schema")) {
-//             throw new TrainingDataException(
-//                 "Errore nel training set a riga " + rowFileRead +
-//                 ": Attributo @schema non trovato.");
-//         }
-//
-//         if (!s[1].matches("[0-9]+")) {
-//             throw new
-//             TrainingDataException("Errore nel training set a riga " + rowFileRead +
-//                 ": Il valore dell'attributo @schema deve essere intero! Valore inserito: " +
-//                 s[1]);
-//         }
-//
-//          explanatorySet = new Attribute[new Integer(s[1])];
-//			int explanatorySetSize = new Integer(s[1]);
-//			short iAttribute = 0;
-//			line = sc.nextLine();
-//			rowFileRead++;
-//
-//         while (!line.contains("@data")) { // Trovo tutti i desc e i target if
-//             (sc.hasNextLine()) {
-//                 s = line.split(" ");
-//
-//                 if (s[0].equals("@desc") && iAttribute <= explanatorySetSize - 1) { // ciclo
-//                     fino al numero di // attributi // aggiungo l'attributo allo spazio
-//                     descrittivo // @desc motor discrete A,B,C,D,E if (!isTagDescFound)
-//                     isTagDescFound = true;
-//
-//                     if (s.length != NUM_PAROLE_RIGA_DESC_CONTINUOUS && s.length !=
-//                         NUM_PAROLE_RIGA_DESC_DISCRETE) {
-//                         throw new
-//                         TrainingDataException("Errore nel training set a riga " + rowFileRead +
-//                             ": il numero di parole trovate nella riga è diverso da quello atteso.\n" +
-//                             "Ricontrolla la sintassi.\n" +
-//                             "Esempio: '@desc <nome attributo> <valori attributi separati da virgola>' ");
-//                     }
-//
-//                     if (s.length >= 3) { // Attributi discreti Set<String> discreteValues = new
-//                         TreeSet < String > ();
-//                         for (String string: s[2].split(",")) {
-//                             discreteValues.add(string);
-//                         }
-//                         explanatorySet.add(iAttribute, new DiscreteAttribute(s[1], iAttribute, discreteValues));
-//                     } else
-//                         explanatorySet.add(iAttribute, new ContinuousAttribute(s[1], iAttribute));
-//                     iAttribute++;
-//
-//                 } else if (s[0].equals("@target")) {
-//
-//                     if (!isTagTargetFound) isTagTargetFound = true;
-//
-//                     if (s.length != NUM_PAROLE_RIGA_TARGET) {
-//                         throw new
-//                         TrainingDataException("Errore nel training set a riga " + rowFileRead +
-//                             ": il numero di parole trovate nella riga è diverso da quello atteso.\n" +
-//                             "Ricontrolla la sintassi.\n" + "Esempio: '@target <nome attributo>'");
-//                     }
-//
-//                     classAttribute = new ContinuousAttribute(s[1], iAttribute);
-//
-//                 }
-//
-//                 line = sc.nextLine();
-//                 rowFileRead++;
-//
-//             } else {
-//                 throw new TrainingDataException(new NoSuchElementException().toString() +
-//                     ": Attributo @data non trovato nel training set.");
-//             }
-//
-//         }
-//
-//         // Se sono arrivato all'attributo data e non ho trovato questi due parametri,
-//         // scateno un'eccezione if (!isTagDescFound) { throw new
-//         TrainingDataException("Errore nel training set: Tag @desc non trovato");
-//     }
-//     if (!isTagTargetFound) {
-//         throw new
-//         TrainingDataException("Errore nel training set: Tag @target non trovato");
-//     }
-//
-//     // Se il numero di attributi individuato è diverso dal valore di schema if
-//     (explanatorySet.size() != iAttribute) {
-//         throw new
-//         TrainingDataException("Numero di attributi individuati con il tag @desc nel training set " +
-//             "diverso da quello specificato nel parametro @schema");
-//     }
-//
-//     // avvalorare numero di esempi // @data 167 String[] dataRow =
-//     line.split(" "); // Mi aspetto di trovare una riga di tipo @data <numero> if
-//     (dataRow.length != NUM_PAROLE_RIGA_DATA) {
-//         throw new
-//         TrainingDataException("Errore nel training set a riga " + rowFileRead +
-//             ": il numero di parole trovate nella riga dell'attributo @data " +
-//             "è diverso da quello atteso.\nRicontrolla la sintassi.\n" +
-//             "Esempio: '@data <valore intero maggiore di 0>'");
-//     } else { // Tag data
-//         trovato
-//         if (!dataRow[0].equals("@data")) {
-//             throw new
-//             TrainingDataException(new ArrayIndexOutOfBoundsException().toString() +
-//                 "Errore nel training set a riga " + rowFileRead + ": Tag @data non trovato");
-//         }
-//         if (!dataRow[1].matches("[1-9][0-9]*")) { // Se il parametro di data non è
-//             un intero positivo
-//             throw new
-//             TrainingDataException("Errore nel training set a riga " + rowFileRead +
-//                 ": il parametro specificato per il tag @data non è un intero maggiore di 0");
-//         }
-//     }
-//
-//     numberOfExamples = new Integer(dataRow[1]); // popolare data data = new
-//     Object[numberOfExamples][explanatorySet.size() + 1];
-//     short iRow = 0;
-//     while (sc.hasNextLine()) {
-//         line = sc.nextLine();
-//         rowFileRead++;
-//
-//         s = line.split(","); // E,E,5,4, 0.28125095
-//
-//         if (s.length - 1 != explanatorySet.size()) { // Numero di parole lette
-//             diverso da @schema + 1
-//             throw new TrainingDataException(new ArrayIndexOutOfBoundsException().toString() + ": I valori letti in riga " +
-//                 rowFileRead + " sono diversi dal numero di attributi attesi nel file " +
-//                 fileName);
-//         }
-//         if (iRow >= numberOfExamples) { // Individuato a runtime throw
-//             new TrainingDataException(new ArrayIndexOutOfBoundsException().toString() +
-//                 ": Il numero di esempi nel training set è diverso dal parametro @data.");
-//         }
-//
-//         // Controllo per ogni attributo del training set che sia compreso nella
-//         classe // degli attributi relativa. for (int jColumn = 0; jColumn < s.length
-//             -
-//             1;
-//         jColumn++) {
-//         boolean trovato = false;
-//         int y = 0;
-//
-//         Attribute tempAttr = explanatorySet.get(jColumn);
-//         if (tempAttr instanceof DiscreteAttribute) {
-//             DiscreteAttribute temp = ((DiscreteAttribute) tempAttr);
-//
-//             while (y < temp.getNumberOfDistinctValues() && !trovato) {
-//                 if (s[jColumn].equalsIgnoreCase(temp.getValue(y))) {
-//                     trovato = true;
-//                 }
-//                 y++;
-//             }
-//             if (!trovato) throw new TrainingDataException("L'attributo '" + s[jColumn] +
-//                 "' letto nel dataset '" + fileName + "' nella riga " + rowFileRead +
-//                 ", colonna " + (jColumn + 1) +
-//                 " non è tra gli attributi discreti dichiarati nell'intestazione del file");
-//             data[iRow][jColumn] = s[jColumn];
-//         } else {
-//             data[iRow][jColumn] =
-//                 Double.parseDouble(s[jColumn]);
-//         }
-//
-//     }
-//
-//     if (s[s.length - 1].isEmpty() || !isDouble(s[s.length - 1])) {
-//         throw new
-//         TrainingDataException("Il valore target specificato nella riga " + (iRow + 1) +
-//             ", colonna " + s.length + " non è di tipo double");
-//     }
-//
-//     data[iRow][s.length - 1] = new Double(s[s.length - 1]);
-//     iRow++;
-//
-// }
-//
-// if (iRow != numberOfExamples) // Individuato se ho finito il file throw new
-//     TrainingDataException("Il numero di esempi nel training set è diverso dal parametro @data.");
-//
-// }
-// catch (FileNotFoundException e) {
-//     throw new
-//     TrainingDataException(e.toString());
-// } finally {
-//     if (sc != null) // Chiudo lo
-//         scanner solo se viene trovato il file sc.close();
-// }
-//
-// }
-
 	private boolean isDiscreteAttributeType(Column c) {
 		return c.getTypeName().toLowerCase().contains("string");
 	}
 
 	private boolean isContinuousAttributeType(Column c) {
-		return c.getTypeName().toLowerCase().contains("float");
+		return c.getTypeName().toLowerCase().contains("number");
 	}
 
 	private boolean isClassAttributeType(Column c) {
@@ -435,8 +202,8 @@ public class Data implements Serializable {
 		Object temp;
 		for (int k = 0; k < getNumberOfExplanatoryAttributes() + 1; k++) {
 
-			temp = data.get(i).get(j);
-			data.get(j).set(k, temp);
+			temp = data.get(i).get(k);
+			data.get(i).set(k, data.get(j).get(k));
 			data.get(j).set(k, temp);
 
 //			temp = data[i][k];
