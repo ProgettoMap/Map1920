@@ -9,6 +9,7 @@ import utility.Keyboard;
  * TODO: ricontrollare tutte le visibilità di attributi, metodi e classi
  * TODO: Ricontrollare tutte le possibili eccezioni
  * TODO: Ricontrollare se le classi implementano correttamente Serializable
+ * TODO: Chiedere se le classi eccezione vanno bene
  */
 
 class MainTest extends Keyboard {
@@ -23,7 +24,7 @@ class MainTest extends Keyboard {
 		} while (!(decision == 1) && !(decision == 2));
 
 		String trainingfileName = "";
-		System.out.println("File name:");
+		System.out.println("Table name:");
 		trainingfileName = Keyboard.readString();
 
 		RegressionTree tree = null;
@@ -31,8 +32,7 @@ class MainTest extends Keyboard {
 			System.out.println("Starting data acquisition phase!");
 			Data trainingSet = null;
 			try {
-
-				trainingSet = new Data(trainingfileName + ".dat");
+				trainingSet = new Data(trainingfileName);
 			} catch (TrainingDataException e) {
 				System.out.println(e);
 				return;
