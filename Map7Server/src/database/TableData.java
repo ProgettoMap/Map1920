@@ -27,8 +27,13 @@ public class TableData {
 	 *
 	 * @param table Nome della tabella nel database
 	 * @return Lista di transazioni memorizzate nella tabella
-	 * @throws SQLException
-	 * @throws EmptySetException
+	 * @throws SQLException      Eccezione generica che viene lanciata quando non è
+	 *                           possibile comunicare con il database o non è
+	 *                           possibile creare uno statement per l'interazione
+	 *                           con esso, o quando la query non viene eseguita
+	 *                           correttamente
+	 * @throws EmptySetException Eccezione lanciata quando la tabella è vuota, o le
+	 *                           query ritornano 0 righe come risultato
 	 */
 	public List<Example> getTransazioni(String table) throws SQLException, EmptySetException {
 		LinkedList<Example> transSet = new LinkedList<Example>();
@@ -37,7 +42,7 @@ public class TableData {
 
 		String query = "SELECT ";
 
-		int countAttributes =  tSchema.getNumberOfAttributes();
+		int countAttributes = tSchema.getNumberOfAttributes();
 		for (int i = 0; i < countAttributes; i++) {
 			Column c = tSchema.getColumn(i);
 			if (i > 0)
@@ -45,8 +50,8 @@ public class TableData {
 			query += c.getColumnName();
 		}
 		if (countAttributes == 0)
-			throw new SQLException("[!] Errore! [!] La tabella " + table + "ha " + countAttributes
-			+ " colonne, non necessarie per effettuare l'apprendimento dell'albero.");
+			throw new SQLException("[!] Error [!] The table '" + table + "' has " + countAttributes
+					+ " column. This number of column is not enough for the tree learning.");
 		query += (" FROM " + table);
 
 		statement = db.getConnection().createStatement();
@@ -65,8 +70,8 @@ public class TableData {
 		rs.close();
 		statement.close();
 		if (empty)
-			throw new EmptySetException("La tabella " + table
-					+ " ha 0 righe, pertanto è vuota. Inserisci prima dei dati al suo interno!");
+			throw new EmptySetException("[!] Error [!] The table '" + table
+					+ "' has zero rows, therefore is empty. Before the execution of the learning of the tree, insert some row first!");
 
 		return transSet;
 	}
@@ -82,22 +87,27 @@ public class TableData {
 	 * @return Insieme di valori distinti ordinati in modalità ascendente che
 	 *         l’attributo identificato da nome column assume nella tabella
 	 *         identificata dal nome table
-	 * @throws SQLException
+	 * @throws SQLException Viene scatenata un'eccezione quando la query non viene
+	 *                      eseguita correttamente, la tabella non è presente, la
+	 *                      query presenta un errore di sintassi.
+	 * @checked
 	 */
-	public Set<String> getDistinctColumnValues(String table, Column column) throws SQLException { // TODO: cambiato il set da object a string, chiedere se il set di object è fatto apposta per essere modificato
-
-		Set<String> discreteValues = new TreeSet<String>();
-
-		ResultSet r = db.getConnection().createStatement().executeQuery("SELECT DISTINCT " + column.getColumnName() + " FROM " + table + " ORDER BY " //TODO: Teoricamente se usiamo un treeset, l'ordinamento dovrebbe avvenire automaticamnete
-				+ column.getColumnName() + " ASC");
+	// E' stato modificato il tipo del valore di ritorno da Set<Object> a
+	// Set<String>
+	// perchè il metodo viene chiamato attualmente solo nell'individuazione di tutti
+	// i valori distinti degli attributi di tipo discreto.
+	// In alternativa si sarebbe dovuto "convertire" il set di object nel tipo
+	// desiderato, ma essendo l'utilizzo univoco (allo stato attuale del progetto),
+	// si è ritenuto più utile modificare il valore di ritorno.
+	public Set<String> getDistinctColumnValues(String table, Column column) throws SQLException {
+		Set<String> distinctValues = new TreeSet<String>();
+		ResultSet r = db.getConnection().createStatement().executeQuery("SELECT DISTINCT " + column.getColumnName()
+				+ " FROM " + table + " ORDER BY " + column.getColumnName() + " ASC");
 		while (r.next()) {
-			discreteValues.add(r.getString(1));
+			distinctValues.add(r.getString(1)); // Con l'utilizzo di un TreeSet, l'ordinamento avviene
+												// automaticamente nell'operazione dell'inserimento
 		}
-		return discreteValues;
-	}
-
-	public enum QUERY_TYPE {
-		MIN, MAX
+		return distinctValues;
 	}
 
 }

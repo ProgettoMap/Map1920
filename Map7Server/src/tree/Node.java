@@ -30,6 +30,7 @@ abstract class Node implements Serializable {
 	 *             training coperto dal nodo corrente
 	 */
 	Node(Data trainingSet, int beginExampleIndex, int endExampleIndex) {
+
 		this.beginExampleIndex = beginExampleIndex;
 		this.endExampleIndex = endExampleIndex;
 		this.variance = computeVariance(trainingSet, beginExampleIndex, endExampleIndex);
