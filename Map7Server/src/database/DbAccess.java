@@ -38,6 +38,8 @@ public class DbAccess {
 		String connectionString = DBMS + "://" + SERVER + ":" + PORT + "/" + DATABASE
 					+ "?user=" + USER_ID + "&password=" + PASSWORD + "&serverTimezone=UTC";
 
+		//System.out.println("Connection's String: " + connectionString);
+
 		try {
 			conn = DriverManager.getConnection(connectionString);
 		} catch(SQLException e) {

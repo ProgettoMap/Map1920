@@ -21,11 +21,6 @@ public class Column {
 		return type.equals("number");
 	}
 
-	public boolean isString() {
-		return type.equals("string");
-	}
-
-
 	@Override
 	public String toString() {
 		return name + ":" + type;

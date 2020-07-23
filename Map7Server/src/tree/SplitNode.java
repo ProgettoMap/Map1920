@@ -138,7 +138,6 @@ abstract class SplitNode extends Node implements Comparable<SplitNode>, Serializ
 	 * @return String - informazioni di ciascun test
 	 */
 	String formulateQuery() {
-
 		String query = "";
 		for (int i = 0; i < mapSplit.size(); i++)
 			query += (i + ":" + attribute + mapSplit.get(i).getComparator() + mapSplit.get(i).getSplitValue()) + "\n";
@@ -188,7 +187,7 @@ abstract class SplitNode extends Node implements Comparable<SplitNode>, Serializ
 		// training coperto dal nodo corrente
 		int numberChild; // numero di split (nodi figli) originanti dal nodo corrente
 		String comparator = "="; // operatore matematico che definisce il test nel nodo
-		// corrente ("=" per valori discreti)
+		// corrente (“=” per valori discreti)
 
 		/**
 		 * Costruttore che avvalora gli attributi di classe per split a valori discreti
@@ -223,7 +222,7 @@ abstract class SplitNode extends Node implements Comparable<SplitNode>, Serializ
 		 * @param int    numberChild - numero di split (nodi figli) originanti dal
 		 *               nodocorrente
 		 * @param String comparator - operatore matematico che definisce il test nel
-		 *               nodo corrente ("=" per valori discreti)
+		 *               nodo corrente (“=” per valori discreti)
 		 */
 		SplitInfo(Object splitValue, int beginIndex, int endIndex, int numberChild, String comparator) {
 

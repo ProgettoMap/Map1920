@@ -25,6 +25,12 @@ import database.TableSchema;
 @SuppressWarnings("serial")
 public class Data implements Serializable {
 
+	private static final int NUM_PAROLE_RIGA_SCHEMA = 2;
+	private static final int NUM_PAROLE_RIGA_DESC_CONTINUOUS = 2;
+	private static final int NUM_PAROLE_RIGA_DESC_DISCRETE = 3;
+	private static final int NUM_PAROLE_RIGA_TARGET = 2;
+	private static final int NUM_PAROLE_RIGA_DATA = 2;
+
 	private List<Example> data = new ArrayList<Example>(); // Modificato da es. 6
 
 	private int numberOfExamples; // Cardinalita'  del training set
@@ -48,17 +54,20 @@ public class Data implements Serializable {
 			db.initConnection();
 		} catch (DatabaseConnectionException e) {
 			System.out.println(e);
+			// TODO: testare!
 			// Viene sollevata una eccezione di tipo TrainingDataException se la connessione
 			// al database fallisce
-			throw new TrainingDataException("[!] Error [!] Cannot create a connection with the database. Detail error: " + e);
+			throw new TrainingDataException("La connessione al database non è andata a buon fine... riprova!");
 		}
+
 		Connection conn = db.getConnection();
 		Statement s = null;
 		try {
 			s = conn.createStatement(); // Controllo se esiste la tabella...
 			ResultSet r = s.executeQuery("SHOW TABLES LIKE '" + tableName + "'");
 			if (r.next() == false) {
-				throw new TrainingDataException("[!] Error [!] The table " + tableName + " doesn't exist.");
+				// TODO: testare!
+				throw new TrainingDataException("La tabella " + tableName + "non esiste.");
 			}
 
 			TableSchema ts = new TableSchema(db, tableName);
@@ -66,24 +75,29 @@ public class Data implements Serializable {
 			//Controlliamo se il target è un valore numerico
 			if ( ! ts.getColumn(ts.getNumberOfAttributes() - 1).isNumber() ) {
 				throw new TrainingDataException(
-					"[!] Error [!] The column that contains the class attribute isn't a numeric type.");
+					"[!] Errore! [!] La colonna contenente l'attributo di classe non è di tipo numerico.");
 			}
 
 			short iAttribute = 0;
 			Iterator<Column> iter = ts.iterator();
 			while(iter.hasNext()) {
 				Column c = iter.next();
-				if (c.isString()) { // Attributi discreti
+				if (isDiscreteAttributeType(c)) { // Attributi discreti
 					Set<String> discreteValues = td.getDistinctColumnValues(tableName, c);
+
 					explanatorySet.add(iAttribute,
 							new DiscreteAttribute(c.getColumnName(), iAttribute, discreteValues));
-				} else if ( ! isClassAttributeType(c) && c.isNumber()) { // Attributo continuo
+				} else if ( ! isClassAttributeType(c) && isContinuousAttributeType(c)) { // Attributo continuo
 					explanatorySet.add(iAttribute, new ContinuousAttribute(c.getColumnName(), iAttribute));
 				} else { // Attributo di classe
 					classAttribute = new ContinuousAttribute(c.getColumnName(), iAttribute);
 				}
 				iAttribute++;
 			}
+			// TODO: controllare un certo for -> for (int jColumn = 0; jColumn < s.length -
+			// 1; jColumn++) e sostituirlo con un foreach su tutte le colonne in
+			// explanatoryset come qui sotto
+
 			try {
 				data = td.getTransazioni(tableName);
 				numberOfExamples = data.size();
@@ -96,6 +110,14 @@ public class Data implements Serializable {
 		finally {
 			//db.closeConnection();
 		}
+	}
+
+	private boolean isDiscreteAttributeType(Column c) {
+		return c.getTypeName().toLowerCase().contains("string");
+	}
+
+	private boolean isContinuousAttributeType(Column c) {
+		return c.getTypeName().toLowerCase().contains("number");
 	}
 
 	private boolean isClassAttributeType(Column c) {
@@ -123,10 +145,10 @@ public class Data implements Serializable {
 	/**
 	 * Restituisce il valore dell'attributo di classe per l'esempio exampleIndex
 	 *
-	 * @param exampleIndex int indice di riga per la matrice data[][] per uno
+	 * @param int exampleIndex - indice di riga per la matrice data[][] per uno
 	 *            specifico esempio
 	 *
-	 * @return Double valore dell'attributo di classe per l'esempio indicizzato in
+	 * @return double - valore dell'attributo di classe per l'esempio indicizzato in
 	 *         input
 	 */
 	public Double getClassValue(int exampleIndex) {
@@ -134,15 +156,13 @@ public class Data implements Serializable {
 		// return (Double) data[exampleIndex][classAttribute.getIndex()];
 	}
 
+	/**
+	 * Restituisce il valore dell'attributo indicizzato da attributeIndex per
+	 * l'esempio exampleIndex
+	 *
+	 * @return data[exampleIndex][attributeIndex]
+	 */
 
-/**
- * Restituisce il valore dell'attributo indicizzato da attributeIndex per
- * l'esempio exampleIndex
- * @param exampleIndex int indice di riga per la matrice data[][] per uno
- *            specifico esempio
- * @param attributeIndex indice dell'attributo nel training set
- * @return data[exampleIndex][attributeIndex] explanatory value  dato dell'indice dell'example e dell'attributo
- */
 	public Object getExplanatoryValue(int exampleIndex, int attributeIndex) {
 		return data.get(exampleIndex).get(attributeIndex); // TODO: vedere se funge
 
@@ -297,17 +317,19 @@ public class Data implements Serializable {
 		return explanatorySet.get(index);
 	}
 
-	// Restituisce l'oggetto corrispondente all'attributo di classe
-//	private ContinuousAttribute getClassAttribute() {
-//		return classAttribute;
-//	}
+	/**
+	 * Restituisce l'oggetto corrispondente all'attributo di classe
+	 */
+	private ContinuousAttribute getClassAttribute() {
+		return classAttribute;
+	}
 
-//	private boolean isDouble(String value) {
-//		try {
-//			Double.parseDouble(value);
-//			return true;
-//		} catch (NumberFormatException e) {
-//			return false;
-//		}
-//	}
+	private boolean isDouble(String value) {
+		try {
+			Double.parseDouble(value);
+			return true;
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
 }

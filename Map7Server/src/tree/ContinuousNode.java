@@ -78,7 +78,7 @@ public class ContinuousNode extends SplitNode implements Serializable {
 	}
 
 	@Override
-	public int compareTo(SplitNode o) { //TODO: OBBLIGATORIAMENTE spostarla nella classe madre
+	public int compareTo(SplitNode o) { //TODO: Vedere se è possibile spostarla nella classe madre
 		return ((Double)this.getVariance()).compareTo(o.getVariance());
 	}
 

@@ -8,20 +8,20 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.TreeSet;
+import server.UnknownValueException;
 
 import data.Attribute;
 import data.ContinuousAttribute;
 import data.Data;
 import data.DiscreteAttribute;
-import server.ServerOneClient;
-import server.UnknownValueException;
+
 
 /**
  * Entità albero di decisione come insieme di sotto-alberi
  *
  */
 @SuppressWarnings("serial")
-public class RegressionTree implements Serializable {
+public class RegressionTree extends Keyboard implements Serializable {
 
 	Node root; // radice del sotto-albero corrente
 	RegressionTree childTree[]; // array di sotto-alberi originanti nel nodo root.
@@ -128,51 +128,30 @@ public class RegressionTree implements Serializable {
 		return ts.first();
 	}
 
-/**
- * Stampa le informazioni dell'intero albero (compresa una intestazione)
- *
- * @param out flusso di
- */
-	public void printTree(ObjectOutputStream out) {
-		try {
-			out.writeObject("********* TREE **********\n");
-			out.writeObject(toString());
-			out.writeObject("*************************\n");
-		} catch (IOException e) {
-			try {
-				out.writeObject("[!] Error [!] Cannot write the tree on the client. Detail Error: " + e);
-			} catch (IOException e1) {
-				System.out.println("[!] Error [!] There has been some error with the input / output. Detail error" + e);
-			}
-		}
-
+	/**
+	 * Stampa le informazioni dell'intero albero (compresa una intestazione)
+	 */
+	public void printTree() {
+		System.out.println("********* TREE **********\n");
+		System.out.println(toString());
+		System.out.println("*************************\n");
 	}
 
 	/**
 	 * Scandisce ciascun ramo dell'albero completo dalla radice alla foglia,
-	 * concatenando le informazioni dei nodi di split fino al nodo foglia.
-	 *
-	 * In particolare per ogni sotto-albero (oggetto DecisionTree) in childTree[]
+	 * concatenando le informazioni dei nodi di split fino al nodo foglia. In
+	 * particolare per ogni sotto-albero (oggetto DecisionTree) in childTree[]
 	 * concatena le informazioni del nodo root: se è di split discende
 	 * ricorsivamente l'albero per ottenere le informazioni del nodo sottostante
 	 * (necessario per ricostruire le condizioni in AND) di ogni ramo-regola, se è
 	 * di foglia (leaf) termina l'attraversamento visualizzando la regola.
-	 *
-	 * @param out flusso di output per comunicare con il client
 	 */
-	public void printRules(ObjectOutputStream out) {
+	public void printRules() {
 
-		try {
-			out.writeObject("********* RULES **********\n");
-			printRules(out, "");
-			out.writeObject("\n**************************\n");
-		} catch (IOException e) {
-			try {
-				out.writeObject("[!] Error [!] Cannot write the tree rules. Detail Error: " + e);
-			} catch (IOException e1) {
-				System.out.println("[!] Error [!] There has been some error with the input / output. Detail error" + e);
-			}
-		}
+		System.out.println("********* RULES **********\n");
+		printRules("");
+		System.out.println("\n**************************\n");
+
 	}
 
 	/**
@@ -185,16 +164,12 @@ public class RegressionTree implements Serializable {
 	 * @param current - Informazioni del nodo di split del sotto-albero al livello
 	 *                superiore
 	 */
-	private void printRules(ObjectOutputStream out, String current) {
+	private void printRules(String current) {
 
 		if (root instanceof LeafNode) {
 
 			current += " ==> Class = " + ((LeafNode) root).getPredictedClassValue();
-			try {
-				out.writeObject(current);
-			} catch (IOException e) {
-				// TODO:
-			}
+			System.out.println(current);
 
 		} else if (root instanceof SplitNode) {
 
@@ -210,10 +185,12 @@ public class RegressionTree implements Serializable {
 				if (childTree[i].root.getNumberOfChildren() != 0)
 					temp += " AND ";
 
-				childTree[i].printRules(out, temp);
+				childTree[i].printRules(temp);
 
 			}
+
 		}
+
 	}
 
 	/**
@@ -276,61 +253,33 @@ public class RegressionTree implements Serializable {
 	 * dell’utente non permetta di selezionare una ramo valido del nodo di split.
 	 * L'eccezione sarà gestita nel metodo che invoca predictClass() .
 	 *
-	 * @param s ServerOneClient oggetto necessario per comunicare con il client
-	 *
-	 * @return Double oggetto contenente il valore di classe predetto per l'esempio
-	 *         acquisito
-	 * @throws UnknownValueException eccezione scatenata quando il valore non viene
-	 *                               riconosciuta
+	 * @return Double - oggetto contenente il valore di classe predetto per
+	 *         l'esempio acquisito
+	 * @throws UnknownValueException
 	 */
-	public Double predictClass(ServerOneClient s) throws UnknownValueException {
+	public Double predictClass() throws UnknownValueException {
 
-		if (root instanceof LeafNode) {
-
-			try {
-				s.getOut().writeObject("OK");
-			} catch (IOException e) {
-
-			}
+		if (root instanceof LeafNode)
 			return ((LeafNode) root).getPredictedClassValue();
-		} else {
-			int risp = -1;
-
-			try {
-				s.getOut().writeObject("QUERY");
-			} catch (IOException e) {
-
-			}
-			try {
-				s.getOut().writeObject(((SplitNode) root).formulateQuery());
-			} catch (IOException e1) {
-
-			}
-			try {
-				risp = ((int) s.getIn().readObject());
-			} catch (ClassNotFoundException e) {
-
-			} catch (IOException e) {
-
-			}
-
+		else {
+			int risp;
+			System.out.println(((SplitNode) root).formulateQuery());
+			risp = Keyboard.readInt();
 			if (risp < 0 || risp >= root.getNumberOfChildren())
-				throw new UnknownValueException( // TODO: Passare eccezione al client!
+				throw new UnknownValueException(
 						"The answer should be an integer between 0 and " + (root.getNumberOfChildren() - 1) + "!");
 			else
-				return childTree[risp].predictClass(s);
+				return childTree[risp].predictClass();
 		}
 	}
 
 	/**
 	 * Serializza l'albero in un file
 	 *
-	 * @param nomeFile String Nome del file in cui salvare l'albero
+	 * @param string Nome del file in cui salvare l'albero
 	 *
-	 * @throws FileNotFoundException eccezione scatenata quando il file non è stato
-	 *                               trovato
-	 * @throws IOException           eccezione scatenata quando l'input provoca
-	 *                               errore
+	 * @throws FileNotFoundException
+	 * @throws IOException
 	 */
 	public void salva(String nomeFile) throws FileNotFoundException, IOException {
 		FileOutputStream fileOut = new FileOutputStream(nomeFile);
@@ -346,12 +295,9 @@ public class RegressionTree implements Serializable {
 	 *
 	 * @param nomeFile - Nome del file in cui è salvato l'albero
 	 * @return RegressionTree - Albero contenuto nel file
-	 * @throws FileNotFoundException  eccezione scatenata quando il file non è stato
-	 *                                trovato
-	 * @throws IOException            eccezione scatenata quando l'input provoca
-	 *                                errore
-	 * @throws ClassNotFoundException eccezione scatenata quando l'oggetto non è
-	 *                                stato trovato
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws ClassNotFoundException
 	 */
 	public static RegressionTree carica(String nomeFile)
 			throws FileNotFoundException, IOException, ClassNotFoundException {
