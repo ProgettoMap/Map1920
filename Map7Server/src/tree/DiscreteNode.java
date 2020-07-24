@@ -51,10 +51,12 @@ class DiscreteNode extends SplitNode implements Serializable {
 	void setSplitInfo(Data trainingSet, int beginExampleIndex, int endExampleIndex, Attribute attribute) {
 
 		// TODO: Fare i cast di attribute in DiscreteAttribute
+
 		// numberOfSplit non viene più utilizzato in quanto adesso utilizziamo una lista
 		// di stringhe che non può avere dimensione fissa
 		// int numberOfSplit = getNumberOfSplit(trainingSet, beginExampleIndex,
 		// endExampleIndex, attribute);
+
 		int begin = beginExampleIndex;
 		Object splitValue = trainingSet.getExplanatoryValue(begin, attribute.getIndex());
 		Object explanatoryValue = null;
@@ -104,7 +106,7 @@ class DiscreteNode extends SplitNode implements Serializable {
 	 */
 	@Override
 	int testCondition(Object value) {
-		//TODO: perchè non viene mai utilizzato?
+		//TODO: Gaetano: perchè non viene mai utilizzato?
 
 		String valueStr = (String) value;
 		int k = 0;

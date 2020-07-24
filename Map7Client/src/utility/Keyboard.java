@@ -22,7 +22,7 @@ public class Keyboard {
 	// Returns the current error count.
 	// -----------------------------------------------------------------
 
-	public static int getErrorCount() {
+	static int getErrorCount() {
 		return errorCount;
 	}
 
@@ -122,7 +122,7 @@ public class Keyboard {
 	// Returns true if there are no more tokens to read on the
 	// current input line.
 	// -----------------------------------------------------------------
-	public static boolean endOfLine() {
+	private static boolean endOfLine() {
 		return !reader.hasMoreTokens();
 	}
 

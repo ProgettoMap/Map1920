@@ -13,6 +13,21 @@ public class MainClient {
 
 	public static void main(String[] args) {
 
+		// Validazione parametri in input
+		if(args.length == 2) {
+			if(!args[0].matches("^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$")) { // Formato ip non valido
+				System.err.println("[!] Error [!] The IP that you've entered isn't correct. Please, start again the program and insert a valid ip.");
+				return;
+			}
+			if(!args[1].matches("^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$")) { // Formato porta non valido
+				System.err.println("[!] Error [!] The port that you've entered isn't correct. Please, start again the program and insert a valid port (value between 1 and 65535).");
+				return;
+			}
+		} else { // Numero parametri insufficiente
+			System.err.println("[!] Error [!] You haven't entered the necessary parameters for starting correctly the Regression Tree Learner.\nMind that you have to launch the program in the following mode: RegressionTreeClient.exe <ip address> <port>");
+			return;
+		}
+
 		InetAddress addr;
 		try {
 			addr = InetAddress.getByName(args[0]);
@@ -24,6 +39,9 @@ public class MainClient {
 		ObjectOutputStream out = null;
 		ObjectInputStream in = null;
 		try {
+			System.out.println("Regression Tree Learner\n\n");
+
+			System.out.println("Trying to connect to the server " + addr + "...");
 			socket = new Socket(addr, new Integer(args[1]).intValue());
 			System.out.println(socket);
 			out = new ObjectOutputStream(socket.getOutputStream());
@@ -106,13 +124,17 @@ public class MainClient {
 
 			} while (Character.toUpperCase(risp) == 'Y');
 
+			// Aggiunta stampa per far capire al server che l'esecuzione del client vuole terminare
+			out.writeObject(0);
+			System.out.println("Thank you for having used this Regression Tree Learner! See you soon");
+
 		} catch (IOException | ClassNotFoundException e) {
 			System.out.println(e.toString());
 		} finally {
 			try {
 				socket.close();
 			} catch (IOException e1) {
-
+				System.err.println("[!] Error [!] Socket has not been closed correctly.");
 			}
 		}
 	}

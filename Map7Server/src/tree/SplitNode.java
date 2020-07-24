@@ -49,8 +49,8 @@ abstract class SplitNode extends Node implements Comparable<SplitNode>, Serializ
 		splitVariance = 0;
 		for (int i = 0; i < mapSplit.size(); i++) {
 
-			double localVariance = new LeafNode(trainingSet, mapSplit.get(i).getBeginindex(), mapSplit.get(i).getEndIndex())
-					.getVariance();
+			double localVariance = new LeafNode(trainingSet, mapSplit.get(i).getBeginindex(),
+					mapSplit.get(i).getEndIndex()).getVariance();
 			splitVariance += (localVariance);
 
 		}
@@ -138,6 +138,7 @@ abstract class SplitNode extends Node implements Comparable<SplitNode>, Serializ
 	 * @return String - informazioni di ciascun test
 	 */
 	String formulateQuery() {
+
 		String query = "";
 		for (int i = 0; i < mapSplit.size(); i++)
 			query += (i + ":" + attribute + mapSplit.get(i).getComparator() + mapSplit.get(i).getSplitValue()) + "\n";
@@ -164,6 +165,10 @@ abstract class SplitNode extends Node implements Comparable<SplitNode>, Serializ
 		return v;
 	}
 
+	public int compareTo(SplitNode o) {
+		return ((Double) this.getVariance()).compareTo(o.getVariance());
+	}
+
 	/*
 	 * Esempi di splitnode: X1, X2...
 	 */
@@ -187,7 +192,7 @@ abstract class SplitNode extends Node implements Comparable<SplitNode>, Serializ
 		// training coperto dal nodo corrente
 		int numberChild; // numero di split (nodi figli) originanti dal nodo corrente
 		String comparator = "="; // operatore matematico che definisce il test nel nodo
-		// corrente (“=” per valori discreti)
+		// corrente ("=" per valori discreti)
 
 		/**
 		 * Costruttore che avvalora gli attributi di classe per split a valori discreti
@@ -222,7 +227,7 @@ abstract class SplitNode extends Node implements Comparable<SplitNode>, Serializ
 		 * @param int    numberChild - numero di split (nodi figli) originanti dal
 		 *               nodocorrente
 		 * @param String comparator - operatore matematico che definisce il test nel
-		 *               nodo corrente (“=” per valori discreti)
+		 *               nodo corrente ("=" per valori discreti)
 		 */
 		SplitInfo(Object splitValue, int beginIndex, int endIndex, int numberChild, String comparator) {
 

@@ -13,7 +13,7 @@ import data.Data;
  * continuo
  */
 @SuppressWarnings("serial")
-public class ContinuousNode extends SplitNode implements Serializable {
+class ContinuousNode extends SplitNode implements Serializable {
 
 	ContinuousNode(Data trainingSet, int beginExampleIndex, int endExampleIndex, ContinuousAttribute attribute) {
 		super(trainingSet, beginExampleIndex, endExampleIndex, attribute);
@@ -76,10 +76,7 @@ public class ContinuousNode extends SplitNode implements Serializable {
 	public String toString() {
 		return "CONTINUOUS " + super.toString();
 	}
+	
 
-	@Override
-	public int compareTo(SplitNode o) { //TODO: Vedere se è possibile spostarla nella classe madre
-		return ((Double)this.getVariance()).compareTo(o.getVariance());
-	}
 
 }

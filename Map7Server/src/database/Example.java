@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Modella una transazione letta dalla base di dati.
+ */
 public class Example implements Comparable<Example>, Iterable<Object> {
 
 	private List<Object> example = new ArrayList<Object>();
 
-	public void add(Object o) {
+	void add(Object o) {
 		example.add(o);
 	}
 
@@ -16,12 +19,21 @@ public class Example implements Comparable<Example>, Iterable<Object> {
 		return example.get(i);
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" }) // I warning sono stati soppressi poichè non ritenuti necessari.
+													// Nello specifico, il warning 'rawtypes' è stato soppresso perchè
+													// quando il parametro non viene passato in input ad un'interfaccia
+													// generica,
+													// di default viene preso il tipo Object (tramite inferenza).
+													// Per quanto riguarda il warning 'unchecked' invece, siamo sicuri
+													// di passare alle funzioni i tipi corretti (in questo caso, Object).
 	@Override
-	public int compareTo(Example ex) {
+	public
+	int compareTo(Example ex) {
 		int i = 0;
 		for (Object o : ex.example) {
-			if ( ! o.equals(this.example.get(i)) )
+			if (!o.equals(this.example.get(i))) {
 				return ((Comparable) o).compareTo(example.get(i));
+			}
 			i++;
 		}
 		return 0;
@@ -40,7 +52,7 @@ public class Example implements Comparable<Example>, Iterable<Object> {
 		return null;
 	}
 
-	//TODO: chiedere se va bene
+	// TODO: chiedere se va bene
 	public void set(int k, Object o) {
 		example.set(k, o);
 	}

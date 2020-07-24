@@ -7,9 +7,11 @@ class MainServer {
 	/**
 	 * @checked
 	 */
-	public static void main(String[] args) {
+	static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
 		boolean connectionError;
+
+		System.out.println("Regression Tree Learner\n");
 		do {
 			connectionError = false;
 			System.out.println("Insert the port on which to create the connection: ");

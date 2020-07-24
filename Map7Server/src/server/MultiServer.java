@@ -4,40 +4,52 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-class MultiServer {
+public class MultiServer {
 
 	private int PORT = 8080;
+	private ServerSocket srvSck;
 
-	public MultiServer(int port) {
-		if (port != PORT) {
+	static int connectionCount = 0;
+
+	public MultiServer(int port) throws IOException {
+		if (port != PORT) { // La assegno solo se differente dalla default
 			this.PORT = port;
-
 		}
-		run();
 		// Costruttore di classe. Inizializza la porta ed invoca run()
+		run();
 	}
 
-	private void run() {
-		/*
-		 * Istanzia un oggetto istanza della classe ServerSocket che pone in attesa di
-		 * crichiesta di connessioni da parte del client. Ad ogni nuova richiesta
-		 * connessione si istanzia ServerOneClient.
-		 */
+	/*
+	 * Istanzia un oggetto istanza della classe ServerSocket che pone in attesa di
+	 * richiesta di connessioni da parte del client.
+	 *
+	 * Ad ogni nuova richiesta connessione si istanzia ServerOneClient.
+	 */
+	private void run() throws IOException {
 
+		srvSck = new ServerSocket(PORT);
 		try {
-			ServerSocket srvSck = new ServerSocket(PORT);
-			Socket socket = srvSck.accept();
-			try {
-			new ServerOneClient(socket);
-			} catch (IOException e) {
-				// Se fallisce chiude il socket,
-				// altrimenti il thread la chiuderà:
-				socket.close();
-			}	finally {
-				srvSck.close();
+			while (true) {
+				if (connectionCount == 0) {
+					System.out.println("Waiting for a new connection...");
+				}
+				Socket socket = srvSck.accept();
+				System.out.println(
+						"New client has started the connection. Clients actually connected: " + ++connectionCount + "\n");
+
+
+				try {
+					new ServerOneClient(socket);
+				} catch (IOException e) {
+					// Se prima dell'esecuzione del run viene scatenata un'eccezione, verrà gestita
+					// dal seguente blocco
+					socket.close();
+					System.out.println(
+							"A client has terminated the connection. Clients actually connected: " + --connectionCount  + "\n\n");
+				}
 			}
-		}	catch (IOException e) {
-			//TODO CACCIA L'eccezione
+		} finally {
+			srvSck.close();
 		}
 	}
 

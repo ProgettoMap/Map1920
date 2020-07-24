@@ -26,7 +26,7 @@ class LeafNode extends Node implements Serializable{
 	 * @param      int endExampleIndex - indice che identifica il sotto-insieme di
 	 *             training coperto dal nodo corrente
 	 */
-	public LeafNode(Data trainingSet, int beginExampleIndex, int endExampleIndex) {
+	LeafNode(Data trainingSet, int beginExampleIndex, int endExampleIndex) {
 		super(trainingSet, beginExampleIndex, endExampleIndex);
 
 		// Avvaloro attributo predictedClassValue come media dei valori
@@ -52,7 +52,7 @@ class LeafNode extends Node implements Serializable{
 	 *
 	 * @return double predictedClassValue
 	 */
-	public Double getPredictedClassValue() {
+	Double getPredictedClassValue() {
 		return predictedClassValue;
 	}
 

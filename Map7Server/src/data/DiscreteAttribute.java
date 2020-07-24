@@ -23,7 +23,7 @@ public class DiscreteAttribute extends Attribute implements Iterable<String>, Se
 	 * @param index  Indice dell'attributo
 	 * @param values Valori discreti
 	 */
-	DiscreteAttribute(String name, int index, Set<String> values) {
+	public DiscreteAttribute(String name, int index, Set<String> values) {
 		super(name, index);
 		this.values = values;
 	}
@@ -44,7 +44,7 @@ public class DiscreteAttribute extends Attribute implements Iterable<String>, Se
 	 */
 	String getValue(int i) {
 
- 		Iterator<String> iter = iterator();
+		Iterator<String> iter = iterator();
 
 		int j = 0;
 		while (j < i) {

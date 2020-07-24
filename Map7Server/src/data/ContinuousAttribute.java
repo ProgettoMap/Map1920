@@ -13,7 +13,7 @@ public class ContinuousAttribute extends Attribute implements Serializable {
 	/**
 	 * Invoca il costruttore della super-classe
 	 *
-	 * @param name Nome dell'attributo
+	 * @param name  Nome dell'attributo
 	 * @param index Indice dell'attributo
 	 */
 	public ContinuousAttribute(String name, int index) {
