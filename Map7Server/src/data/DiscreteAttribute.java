@@ -39,7 +39,7 @@ public class DiscreteAttribute extends Attribute implements Iterable<String>, Se
 	/**
 	 * Metodo che prende in input un indice i di un solo valore discreto
 	 *
-	 * @param i
+	 * @param i - indice della stringa che si vuole prendere dalla collezione
 	 * @return i-esimo valore discreto dell'array values[]
 	 */
 	String getValue(int i) {
@@ -51,7 +51,6 @@ public class DiscreteAttribute extends Attribute implements Iterable<String>, Se
 			// Non è stato inserito il controllo per verificare se c'è un elemento
 			// successivo poichè non crediamo sia possibile
 			// modificare la signature del metodo.
-			// TODO throws exception
 			iter.next();
 			j++;
 		}

@@ -37,7 +37,7 @@ public class RegressionTree implements Serializable {
 	 * Istanzia un sotto-albero dell'intero albero e avvia l'induzione dell'albero
 	 * dagli esempi di training in input
 	 *
-	 * @param trainingSet
+	 * @param trainingSet - Insieme di esempi di apprendimento
 	 */
 	public RegressionTree(Data trainingSet) {
 
@@ -290,21 +290,20 @@ public class RegressionTree implements Serializable {
 			try {
 				s.getOut().writeObject("OK");
 			} catch (IOException e) {
-
+				s.getOut().writeObject("[!] Error [!] There was a problem with the input/output. Detail error: " + e);
 			}
 			return ((LeafNode) root).getPredictedClassValue();
 		} else {
 			int risp = -1;
-
 			try {
 				s.getOut().writeObject("QUERY");
 			} catch (IOException e) {
-
+				s.getOut().writeObject("[!] Error [!] There was a problem with the input/output. Detail error: " + e);
 			}
 			try {
 				s.getOut().writeObject(((SplitNode) root).formulateQuery());
-			} catch (IOException e1) {
-
+			} catch (IOException e) {
+				s.getOut().writeObject("[!] Error [!] There was a problem with the input/output. Detail error: " + e);
 			}
 			try {
 				risp = ((int) s.getIn().readObject());
@@ -316,8 +315,8 @@ public class RegressionTree implements Serializable {
 
 			if (risp < 0 || risp >= root.getNumberOfChildren()) {
 				try {
-					s.getOut().writeObject("!ERROR! The answer should be an integer between 0 and "
-							+ (root.getNumberOfChildren() - 1) + "!"); //TODO Rivedere lato client cosa succede
+					s.getOut().writeObject("[!] Error [!] The answer should be an integer between 0 and "
+							+ (root.getNumberOfChildren() - 1) + "!");
 				} catch (IOException e) {
 
 				}

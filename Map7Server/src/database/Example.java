@@ -52,7 +52,11 @@ public class Example implements Comparable<Example>, Iterable<Object> {
 		return null;
 	}
 
-	// TODO: chiedere se va bene
+	// Metodo implementato per inserire un oggetto all'interno dell'arrayList
+	/**
+	 * @param k - Indice dell'arraylist nella quale si vuole inserire / rimpiazzare l'oggetto
+	 * @param o - Oggetto da inserire all'interno dell'arrayList
+	 */
 	public void set(int k, Object o) {
 		example.set(k, o);
 	}

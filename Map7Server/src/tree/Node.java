@@ -22,11 +22,11 @@ abstract class Node implements Serializable {
 	 * calcolata rispetto all'attributo da predire nel sotto-insieme di training
 	 * coperto dal nodo
 	 *
-	 * @param Data trainingSet - oggetto di classe Data contenente il training set
+	 * @param trainingSet - oggetto di classe Data contenente il training set
 	 *             completo
-	 * @param      int beginExampleIndex - indice che identifica il sotto-insieme di
+	 * @param beginExampleIndex - indice che identifica il sotto-insieme di
 	 *             training coperto dal nodo corrente
-	 * @param      int endExampleIndex - indice che identifica il sotto-insieme di
+	 * @param endExampleIndex - indice che identifica il sotto-insieme di
 	 *             training coperto dal nodo corrente
 	 */
 	Node(Data trainingSet, int beginExampleIndex, int endExampleIndex) {
@@ -40,13 +40,13 @@ abstract class Node implements Serializable {
 	}
 
 	/**
-	 * @param Data trainingSet - oggetto di classe Data contenente il training set
+	 * @param trainingSet - oggetto di classe Data contenente il training set
 	 *             completo
-	 * @param      int beginExampleIndex - indice che identifica il sotto-insieme di
+	 * @param beginExampleIndex - indice che identifica il sotto-insieme di
 	 *             training coperto dal nodo corrente
-	 * @param      int endExampleIndex - indice che identifica il sotto-insieme di
+	 * @param endExampleIndex - indice che identifica il sotto-insieme di
 	 *             training coperto dal nodo corrente
-	 * @return double Valore della somma degli scarti quadratici
+	 * @return Valore della somma degli scarti quadratici
 	 */
 	private double computeVariance(Data trainingSet, int beginExampleIndex, int endExampleIndex) {
 

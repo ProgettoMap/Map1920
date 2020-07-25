@@ -56,10 +56,9 @@ public class DbAccess {
 		return conn;
 	}
 
-
-
-	void closeConnection() throws SQLException{
-		conn.close();
+	public void closeConnection() throws SQLException{
+		if(!conn.isClosed())
+			conn.close();
 	}
 
 }

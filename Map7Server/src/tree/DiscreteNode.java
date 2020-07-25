@@ -17,13 +17,13 @@ class DiscreteNode extends SplitNode implements Serializable {
 	 * Istanzia un oggetto invocando il costruttore della superclasse con il
 	 * parametro attribute
 	 *
-	 * @param Data      trainingSet - oggetto di classe Data contenente il training
+	 * @param trainingSet - oggetto di classe Data contenente il training
 	 *                  set completo
-	 * @param int       beginExampleIndex - Indice estremo del sotto-insieme di
+	 * @param beginExampleIndex - Indice estremo del sotto-insieme di
 	 *                  training
-	 * @param int       endExampleIndex - Indice estremo del sotto-insieme di
+	 * @param endExampleIndex - Indice estremo del sotto-insieme di
 	 *                  training
-	 * @param Attribute attribute - Attributo indipendente sul quale si definisce lo
+	 * @param attribute - Attributo indipendente sul quale si definisce lo
 	 *                  split
 	 */
 	public DiscreteNode(Data trainingSet, int beginExampleIndex, int endExampleIndex, Attribute attribute) {
@@ -37,20 +37,18 @@ class DiscreteNode extends SplitNode implements Serializable {
 	 * porzione di trainingSet compresa tra beginExampleIndex e endExampleIndex),
 	 * quindi popola l'array mapSplit[] con tali oggetti
 	 *
-	 * @param Data      trainingSet - oggetto di classe Data contenente il training
+	 * @param trainingSet - oggetto di classe Data contenente il training
 	 *                  set completo
-	 * @param int       beginExampleIndex - indice che identifica il sotto-insieme
+	 * @param beginExampleIndex - indice che identifica il sotto-insieme
 	 *                  di training coperto dal nodo corrente
-	 * @param int       endExampleIndex - indice che identifica il sotto-insieme di
+	 * @param endExampleIndex - indice che identifica il sotto-insieme di
 	 *                  training coperto dal nodo corrente
-	 * @param Attribute attribute - Attributo indipendente sul quale si definisce lo
+	 * @param attribute - Attributo indipendente sul quale si definisce lo
 	 *                  split
 	 *
 	 */
 	@Override
 	void setSplitInfo(Data trainingSet, int beginExampleIndex, int endExampleIndex, Attribute attribute) {
-
-		// TODO: Fare i cast di attribute in DiscreteAttribute
 
 		// numberOfSplit non viene più utilizzato in quanto adesso utilizziamo una lista
 		// di stringhe che non può avere dimensione fissa
@@ -98,7 +96,7 @@ class DiscreteNode extends SplitNode implements Serializable {
 	 * l'identificativo dello split (indice della posizione nell’array mapSplit) con
 	 * cui il test è positivo
 	 *
-	 * @param Object value - valore discreto dell'attributo che si vuole testare
+	 * @param value - valore discreto dell'attributo che si vuole testare
 	 *               rispetto a tutti gli split
 	 * @return int branchNumber - Identificativo dello split (indice della posizione
 	 *         nell’array mapSplit)
@@ -106,7 +104,6 @@ class DiscreteNode extends SplitNode implements Serializable {
 	 */
 	@Override
 	int testCondition(Object value) {
-		//TODO: Gaetano: perchè non viene mai utilizzato?
 
 		String valueStr = (String) value;
 		int k = 0;

@@ -15,8 +15,8 @@ public abstract class Attribute implements Serializable {
 	/**
 	 * E' il costruttore di classe. Inizializza i valori dei membri name, index
 	 *
-	 * @param name
-	 * @param index
+	 * @param name - Nome dell'attributo
+	 * @param index - Indice all'interno del training set
 	 */
 	public Attribute(String name, int index) {
 

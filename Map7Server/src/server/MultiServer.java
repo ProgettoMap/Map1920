@@ -35,7 +35,7 @@ public class MultiServer {
 				}
 				Socket socket = srvSck.accept();
 				System.out.println(
-						"New client has started the connection. Clients actually connected: " + ++connectionCount + "\n");
+						"\n New client has started the connection. Clients actually connected: " + ++connectionCount + "\n");
 
 
 				try {
