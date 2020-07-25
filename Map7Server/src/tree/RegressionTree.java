@@ -290,35 +290,36 @@ public class RegressionTree implements Serializable {
 			try {
 				s.getOut().writeObject("OK");
 			} catch (IOException e) {
-				s.getOut().writeObject("[!] Error [!] There was a problem with the input/output. Detail error: " + e);
+				System.err.print("[!] Error [!] There was a problem with the input/output. Detail error: " + e);
 			}
 			return ((LeafNode) root).getPredictedClassValue();
 		} else {
 			int risp = -1;
+
 			try {
 				s.getOut().writeObject("QUERY");
 			} catch (IOException e) {
-				s.getOut().writeObject("[!] Error [!] There was a problem with the input/output. Detail error: " + e);
+				System.err.print("[!] Error [!] There was a problem with the input/output. Detail error: " + e);
 			}
 			try {
 				s.getOut().writeObject(((SplitNode) root).formulateQuery());
 			} catch (IOException e) {
-				s.getOut().writeObject("[!] Error [!] There was a problem with the input/output. Detail error: " + e);
+				System.err.print("[!] Error [!] There was a problem with the input/output. Detail error: " + e);
 			}
 			try {
 				risp = ((int) s.getIn().readObject());
 			} catch (ClassNotFoundException e) {
 
 			} catch (IOException e) {
-
+				System.err.print("[!] Error [!] There was a problem with the input/output. Detail error: " + e);
 			}
 
 			if (risp < 0 || risp >= root.getNumberOfChildren()) {
 				try {
-					s.getOut().writeObject("[!] Error [!] The answer should be an integer between 0 and "
-							+ (root.getNumberOfChildren() - 1) + "!");
+					s.getOut().writeObject("!ERROR! The answer should be an integer between 0 and "
+							+ (root.getNumberOfChildren() - 1) + "!"); //TODO Rivedere lato client cosa succede
 				} catch (IOException e) {
-
+					System.err.print("[!] Error [!] There was a problem with the input/output. Detail error: " + e);
 				}
 				throw new UnknownValueException();
 			} else

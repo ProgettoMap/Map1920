@@ -32,10 +32,14 @@ abstract class SplitNode extends Node implements Comparable<SplitNode>, Serializ
 	 * calcolati su ciascuno SplitInfo collezionati in mapSplit)
 	 *
 	 *
-	 * @param trainingSet - insieme di esempi d'apprendimento
-	 * @param beginExampleIndex - indice di inizio	
-	 * @param endExampleIndex - indice di fine
-	 * @param attribute - 
+	 * @param trainingSet - oggetto di classe Data contenente il training set
+	 *             completo
+	 * @param beginExampleIndex - indice che identifica il sotto-insieme di
+	 *             training coperto dal nodo corrente
+	 * @param endExampleIndex - indice che identifica il sotto-insieme di
+	 *             training coperto dal nodo corrente
+	 * @param attribute - Attributo indipendente sul quale si definisce lo split
+	 *
 	 */
 	SplitNode(Data trainingSet, int beginExampleIndex, int endExampleIndex, Attribute attribute) {
 
