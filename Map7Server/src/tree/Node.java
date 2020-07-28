@@ -4,10 +4,14 @@ import java.io.Serializable;
 
 import data.Data;
 
+/** Classe astratta che modella il nodo di un albero */
 @SuppressWarnings("serial")
 abstract class Node implements Serializable {
 
-	static int idNodeCount = 0; // contatore dei nodi generati nell'albero
+	/**
+	 * Contatore dei nodi generati nell'albero
+	 */
+	static int idNodeCount = 0;
 	private int idNode; // identificativo numerico del nodo
 	private int beginExampleIndex; // indice nell'array del training set del primo esempio coperto dal nodo
 	// corrente

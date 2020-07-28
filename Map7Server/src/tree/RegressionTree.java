@@ -16,10 +16,7 @@ import data.DiscreteAttribute;
 import server.ServerOneClient;
 import server.UnknownValueException;
 
-/**
- * Entità albero di decisione come insieme di sotto-alberi
- *
- */
+/** Classe che modella l'entità albero di decisione come insieme di sotto-alberi */
 @SuppressWarnings("serial")
 public class RegressionTree implements Serializable {
 
@@ -45,7 +42,7 @@ public class RegressionTree implements Serializable {
 
 	}
 
-	/**
+	/*
 	 * Genera un sotto-albero con il sotto-insieme di input istanziando un nodo
 	 * fogliare (isLeaf()) o un nodo di split. In tal caso determina il miglior nodo
 	 * rispetto al sotto-insieme di input (determineBestSplitNode()), ed a tale nodo
@@ -57,14 +54,15 @@ public class RegressionTree implements Serializable {
 	 * split non origina figli, il nodo diventa fogliare.
 	 *
 	 *
-	 * @param Data trainingSet oggetto di classe Data contenente il training set
-	 *             completo
-	 * @param int  begin indice che identifica il sotto-insieme di training coperto
-	 *             dal nodo corrente
-	 * @param int  end indice che identifica il sotto-insieme di training coperto
-	 *             dal nodo corrente
-	 * @param int  numberOfExamplesPerLeaf Numero massimo che una foglia deve
-	 *             contenere
+	 * trainingSet - oggetto di classe Data contenente il training set completo
+	 *
+	 * begin - indice che identifica il sotto-insieme di training coperto dal nodo
+	 * corrente
+	 *
+	 * end - indice che identifica il sotto-insieme di training coperto dal nodo
+	 * corrente
+	 *
+	 * numberOfExamplesPerLeaf - Numero massimo che una foglia deve contenere
 	 */
 	private void learnTree(Data trainingSet, int begin, int end, int numberOfExamplesPerLeaf) {
 		if (isLeaf(trainingSet, begin, end, numberOfExamplesPerLeaf)) {
@@ -79,8 +77,8 @@ public class RegressionTree implements Serializable {
 				for (int i = 0; i < root.getNumberOfChildren(); i++) {
 					childTree[i] = new RegressionTree();
 
-					int beginIndex = ((SplitNode) root).getSplitInfo(i).beginIndex;
-					int endIndex = ((SplitNode) root).getSplitInfo(i).endIndex;
+					int beginIndex = ((SplitNode) root).getSplitInfo(i).getBeginindex();
+					int endIndex = ((SplitNode) root).getSplitInfo(i).getEndIndex();
 
 					childTree[i].learnTree(trainingSet, beginIndex, endIndex, numberOfExamplesPerLeaf);
 				}
@@ -90,7 +88,7 @@ public class RegressionTree implements Serializable {
 		}
 	}
 
-	/**
+	/*
 	 * Per ciascun attributo indipendente istanzia il DiscreteNode associato e
 	 * seleziona il nodo di split con minore varianza tra i DiscreteNode istanziati.
 	 *
@@ -99,12 +97,15 @@ public class RegressionTree implements Serializable {
 	 *
 	 * Restituisce il nodo selezionato.
 	 *
-	 * @param Data  - oggetto di classe Data contenente il training set completo
-	 * @param begin - indice che identifica il sotto-insieme di training coperto dal
-	 *              nodo corrente
-	 * @param end   - indice che identifica il sotto-insieme di training coperto dal
-	 *              nodo corrente
-	 * @return SplitNode - nodo di split migliore per il sotto-insieme di training
+	 * trainingSet - oggetto di classe Data contenente il training set completo
+	 *
+	 * begin - indice che identifica il sotto-insieme di training coperto dal nodo
+	 * corrente
+	 *
+	 * end - indice che identifica il sotto-insieme di training coperto dal nodo
+	 * corrente
+	 *
+	 * SplitNode - nodo di split migliore per il sotto-insieme di training
 	 */
 	private SplitNode determineBestSplitNode(Data trainingSet, int begin, int end) {
 
@@ -175,15 +176,17 @@ public class RegressionTree implements Serializable {
 		}
 	}
 
-	/**
-	 * Supporta il metodo public void printRules(). Concatena alle informazioni in
-	 * current del precedente nodo quelle del nodo root del corrente sotto-albero
-	 * (oggetto DecisionTree): se il nodo corrente è di split il metodo viene
-	 * invocato ricorsivamente con current e le informazioni del nodo corrente, se è
-	 * di fogliare (leaf) visualizza tutte le informazioni concatenate.
+	/*
+	 * Supporta il metodo public void printRules().
 	 *
-	 * @param current - Informazioni del nodo di split del sotto-albero al livello
-	 *                superiore
+	 * Concatena alle informazioni in current del precedente nodo quelle del nodo
+	 * root del corrente sotto-albero (oggetto DecisionTree): se il nodo corrente è
+	 * di split il metodo viene invocato ricorsivamente con current e le
+	 * informazioni del nodo corrente, se è di fogliare (leaf) visualizza tutte le
+	 * informazioni concatenate.
+	 *
+	 * current - Informazioni del nodo di split del sotto-albero al livello
+	 * superiore
 	 */
 	private void printRules(ObjectOutputStream out, String current) {
 
@@ -239,7 +242,7 @@ public class RegressionTree implements Serializable {
 		return tree;
 	}
 
-	/**
+	/*
 	 * Verifica se il sotto-insieme corrente può essere coperto da un nodo foglia
 	 * controllando che il numero di esempi del training set compresi tra begin ed
 	 * end sia minore o uguale di numberOfExamplesPerLeaf.
@@ -248,16 +251,18 @@ public class RegressionTree implements Serializable {
 	 * RegressionTree dove numberOfExamplesPerLeaf è fissato al 10% della dimensione
 	 * del training set
 	 *
-	 * @param Data trainingSet - oggetto di classe Data contenente il training set
-	 *             completo
-	 * @param int  indice che identifica il sotto-insieme di training coperto dal
-	 *             nodo corrente
-	 * @param int  indice che identifica il sotto-insieme di training coperto dal
-	 *             nodo corrente
-	 * @param int  Numero minimo che una foglia deve contenere
+	 * trainingSet - oggetto di classe Data contenente il training set completo
 	 *
-	 * @return boolean - Ritorna vero se la partizione data contiene un nodo
-	 *         fogliare, falso altrimenti
+	 * begin - indice che identifica il sotto-insieme di training coperto dal nodo
+	 * corrente
+	 *
+	 * end - indice che identifica il sotto-insieme di training coperto dal nodo
+	 * corrente
+	 *
+	 * numberOfExamplesPerLeaf - Numero minimo che una foglia deve contenere
+	 *
+	 * Ritorna vero se la partizione data contiene un nodo fogliare, falso
+	 * altrimenti
 	 */
 	private boolean isLeaf(Data trainingSet, int begin, int end, int numberOfExamplesPerLeaf) {
 		return ((end - begin + 1) <= numberOfExamplesPerLeaf);
@@ -317,7 +322,7 @@ public class RegressionTree implements Serializable {
 			if (risp < 0 || risp >= root.getNumberOfChildren()) {
 				try {
 					s.getOut().writeObject("!ERROR! The answer should be an integer between 0 and "
-							+ (root.getNumberOfChildren() - 1) + "!"); //TODO Rivedere lato client cosa succede
+							+ (root.getNumberOfChildren() - 1) + "!");
 				} catch (IOException e) {
 					System.err.print("[!] Error [!] There was a problem with the input/output. Detail error: " + e);
 				}

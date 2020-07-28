@@ -3,7 +3,7 @@ package data;
 import java.io.Serializable;
 
 /**
- * La classe modella un generico attributo discreto o continuo.
+ * Classe che modella un attributo discreto o continuo.
  *
  */
 @SuppressWarnings("serial")

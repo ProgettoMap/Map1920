@@ -8,13 +8,19 @@ import data.Attribute;
 import data.ContinuousAttribute;
 import data.Data;
 
-/**
- * La classe ContinuousNode rappresenta un nodo corrispondente ad un attributo
- * continuo
- */
+/** Classe che modella un nodo corrispondente ad un attributo continuo */
 @SuppressWarnings("serial")
 class ContinuousNode extends SplitNode implements Serializable {
 
+	/**
+	 * @param trainingSet - oggetto di classe Data contenente il training set
+	 *             completo
+	 * @param beginExampleIndex - indice che identifica il sotto-insieme di
+	 *             training coperto dal nodo corrente
+	 * @param endExampleIndex - indice che identifica il sotto-insieme di
+	 *             training coperto dal nodo corrente
+	 * @param attribute - Attributo indipendente sul quale si definisce lo split
+	 */
 	ContinuousNode(Data trainingSet, int beginExampleIndex, int endExampleIndex, ContinuousAttribute attribute) {
 		super(trainingSet, beginExampleIndex, endExampleIndex, attribute);
 	}
@@ -54,7 +60,7 @@ class ContinuousNode extends SplitNode implements Serializable {
 		// rimuovo split inutili (che includono tutti gli esempi nella stessa
 		// partizione)
 
-		if ((mapSplit.get(1).beginIndex == mapSplit.get(1).getEndIndex()))
+		if ((mapSplit.get(1).getBeginindex() == mapSplit.get(1).getEndIndex()))
 			mapSplit.remove(1);
 
 	}
@@ -76,7 +82,7 @@ class ContinuousNode extends SplitNode implements Serializable {
 	public String toString() {
 		return "CONTINUOUS " + super.toString();
 	}
-	
+
 
 
 }

@@ -5,16 +5,23 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Modella una transazione letta dalla base di dati.
+ * Classe che modella una transazione letta dal database.
  */
 public class Example implements Comparable<Example>, Iterable<Object> {
 
 	private List<Object> example = new ArrayList<Object>();
 
+	/**
+	 * @param o Instanza di Object da aggiungere all'ArrayList
+	 */
 	void add(Object o) {
 		example.add(o);
 	}
 
+	/**
+	 * @param i Indice dell'elemento nell'ArrayList
+	 * @return Elemento nella posizione i nell'ArrayList
+	 */
 	public Object get(int i) {
 		return example.get(i);
 	}

@@ -8,10 +8,18 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ *
+ * Classe che modella la tabella di un database
+ *
+ */
 public class TableData {
 
 	private DbAccess db;
 
+	/**
+	 * @param db Gestore database
+	 */
 	public TableData(DbAccess db) {
 		this.db = db;
 	}
@@ -90,16 +98,15 @@ public class TableData {
 	 * @throws SQLException Viene scatenata un'eccezione quando la query non viene
 	 *                      eseguita correttamente, la tabella non è presente, la
 	 *                      query presenta un errore di sintassi.
-	 * @checked
 	 */
-	public // E' stato modificato il tipo del valore di ritorno da Set<Object> a
+	// E' stato modificato il tipo del valore di ritorno da Set<Object> a
 	// Set<String>
 	// perchè il metodo viene chiamato attualmente solo nell'individuazione di tutti
 	// i valori distinti degli attributi di tipo discreto.
 	// In alternativa si sarebbe dovuto "convertire" il set di object nel tipo
 	// desiderato, ma essendo l'utilizzo univoco (allo stato attuale del progetto),
 	// si è ritenuto più utile modificare il valore di ritorno.
-	Set<String> getDistinctColumnValues(String table, Column column) throws SQLException {
+	public Set<String> getDistinctColumnValues(String table, Column column) throws SQLException {
 		Set<String> distinctValues = new TreeSet<String>();
 		ResultSet r = db.getConnection().createStatement().executeQuery("SELECT DISTINCT " + column.getColumnName()
 				+ " FROM " + table + " ORDER BY " + column.getColumnName() + " ASC");

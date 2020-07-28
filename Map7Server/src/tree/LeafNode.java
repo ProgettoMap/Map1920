@@ -5,12 +5,13 @@ import java.io.Serializable;
 import data.Data;
 
 /**
- * Entità Nodo fogliare
+ * Classe che modella l'entità nodo fogliare
  */
 @SuppressWarnings("serial")
 class LeafNode extends Node implements Serializable{
 
-	Double predictedClassValue; // valore dell'attributo di classe espresso nella foglia corrente
+
+	private Double predictedClassValue; 
 
 	/**
 	 * Istanzia un oggetto invocando il costruttore della superclasse

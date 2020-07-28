@@ -9,6 +9,7 @@ import data.Data;
 import data.TrainingDataException;
 import tree.RegressionTree;
 
+/** Classe che gestisce la comunicazione e il flusso di dati tra server e client */
 public class ServerOneClient extends Thread {
 
 	private Socket socket;
@@ -45,15 +46,16 @@ public class ServerOneClient extends Thread {
 						tableName = (String) in.readObject();
 						trainingSet = new Data(tableName);
 					} catch (TrainingDataException e) {
-						out.writeObject(e);
+						out.writeObject("[!] Error [!] " + e);
 					}
 					out.writeObject("OK");
 
 					// Starting learning phase
-					if (((int) in.readObject()) == 1) { // The client has choose to learn the regression tree
+					if (((int) in.readObject()) == 1) { // Il client ha deciso di acquisire un nuovo albero a partire da
+														// una tabella già esistente
 						tree = new RegressionTree(trainingSet);
 						try {
-							tree.salva(tableName + ".dmp");
+							tree.salva(tableName + ".dmp"); // Una volta appreso l'albero, salvo lo stesso serializzandolo su file
 						} catch (IOException e) {
 							out.writeObject(
 									"[!] Error [!] Cannot save the learned Regression Tree on the server. Detail Error: "
@@ -65,14 +67,14 @@ public class ServerOneClient extends Thread {
 						tree = RegressionTree.carica(in.readObject().toString() + ".dmp");
 					} catch (ClassNotFoundException | IOException e) {
 						out.writeObject(
-								"[!] Error [!] Cannot load the Regression Tree saved on the server. Detail Error: "
+								"[!] Error [!] Cannot load the Regression Tree saved on the server. Are you sure that the file already exists? Detail Error: "
 										+ e);
 					}
 				}
 
 				// Abbiamo deciso di passare come nelle esercitazioni precedenti la
 				// visualizzazione dell'albero appreso e delle regole
-				// Client expect response with rules and tree
+
 				tree.printRules(out); // Printing all rules
 				out.writeObject("FINISH"); // Finished to print the rules, the client can goes on
 
@@ -89,16 +91,14 @@ public class ServerOneClient extends Thread {
 					}
 				}
 
-
-
 			} catch (ClassNotFoundException e1) {
-				System.out.println(
+				System.err.println(
 						"[!] Error [!] Cannot convert a type of the data inserted in another one. Detail error:" + e1);
 			}
 		} catch (IOException e) {
-			System.out.println("[!] Error [!] There was a problem with the input/output. Detail error: " + e);
+			System.err.println("[!] Error [!] There was a problem with the input/output. Detail error: " + e);
 		} finally {
-			// Close the connection
+			// Chiude la connessione
 			try {
 				socket.close();
 			} catch (IOException e) {
@@ -109,10 +109,17 @@ public class ServerOneClient extends Thread {
 		}
 	}
 
+	/**
+	 * @return Flusso di input di comunicazione con il client
+	 */
 	public ObjectInputStream getIn() {
 		return in;
 	}
 
+	/**
+	 * 
+	 * @return Flusso di output di comunicazione con il client
+	 */
 	public ObjectOutputStream getOut() {
 		return out;
 	}

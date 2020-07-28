@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * Rappresenta un attributo discreto
+ * Classe che modella un attributo discreto
  */
 //NOTE: Attributi nominali (es. A, B, C...)
 @SuppressWarnings("serial")

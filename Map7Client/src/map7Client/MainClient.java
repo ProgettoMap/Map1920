@@ -8,7 +8,11 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import utility.Keyboard;
-
+/**
+ * 
+ * Main del client
+ *
+ */
 public class MainClient {
 
 	public static void main(String[] args) {
@@ -40,15 +44,15 @@ public class MainClient {
 		ObjectInputStream in = null;
 		try {
 			System.out.println("Regression Tree Learner\n\n");
-
 			System.out.println("Trying to connect to the server " + addr + "...");
 			socket = new Socket(addr, new Integer(args[1]).intValue());
 			System.out.println(socket);
+
+			// stream con richieste del client
 			out = new ObjectOutputStream(socket.getOutputStream());
 			in = new ObjectInputStream(socket.getInputStream());
-			// stream con richieste del client
 		} catch (IOException e) {
-			System.out.println("[!] Error [!] Cannot initialize the connection with the server. Detail error: " + e.toString());
+			System.err.println("[!] Error [!] Cannot initialize the connection with the server. Detail error: " + e.toString());
 			return;
 		}
 
@@ -72,7 +76,7 @@ public class MainClient {
 				out.writeObject(tableName);
 				answer = in.readObject().toString();
 				if (!answer.equals("OK")) {
-					System.out.println(answer);
+					System.err.println(answer); // C'è stato qualche errore
 					return;
 				}
 				System.out.println("Starting learning phase!");
@@ -93,7 +97,7 @@ public class MainClient {
 
 			answer = in.readObject().toString();
 			if (!answer.equals("OK")) {
-				System.out.println(answer);
+				System.err.println(answer);
 				return;
 			}
 
@@ -117,7 +121,7 @@ public class MainClient {
 					System.out.println("Predicted class:" + answer);
 
 				} else // Printing error message
-					System.out.println(answer);
+					System.err.println(answer);
 
 				System.out.println("Would you repeat ? (y/n)");
 				risp = Keyboard.readChar();

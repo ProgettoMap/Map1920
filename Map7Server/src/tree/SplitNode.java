@@ -7,15 +7,18 @@ import java.util.List;
 import data.Attribute;
 import data.Data;
 
+/** Classe che modella l'entità nodo non fogliare */
 @SuppressWarnings("serial")
 abstract class SplitNode extends Node implements Comparable<SplitNode>, Serializable {
 
 	// NOTE: uno splitNode ha più splitInfo
 
-	Attribute attribute; // oggetto Attribute che modella l'attributo indipendente sul quale lo split è
+	private Attribute attribute; // oggetto Attribute che modella l'attributo indipendente sul quale lo split è
 	// generato
-	List<SplitInfo> mapSplit = new ArrayList<SplitInfo>(); // array per memorizzare gli split candidati in una struttura
-															// dati di dimensione
+	/**
+	 * Array per memorizzare gli split candidati in una struttura dati di dimensione
+	 */
+	List<SplitInfo> mapSplit = new ArrayList<SplitInfo>();
 	// pari ai possibili valori di test
 	private double splitVariance; // attributo che contiene il valore di varianza a seguito del partizionamento
 	// indotto dallo split corrente
@@ -176,7 +179,6 @@ abstract class SplitNode extends Node implements Comparable<SplitNode>, Serializ
 	/*
 	 * Esempi di splitnode: X1, X2...
 	 */
-	// Classe che aggrega tutte le informazioni riguardanti un nodo di split
 	/*
 	 * NOTE: E' la descrizione della variabile indipendente (es. X1, X2)
 	 *
@@ -186,16 +188,21 @@ abstract class SplitNode extends Node implements Comparable<SplitNode>, Serializ
 	 * A,B,C,D,E Descrizione: pgain | Valori: 3,4,5,6 Descrizione: vgain | Valori:
 	 * 1,2,3,4,5
 	 */
+	/**
+	 *
+	 * Classe che aggrega tutte le informazioni riguardanti un nodo di split
+	 *
+	 */
 	class SplitInfo implements Serializable {
 
-		Object splitValue; // valore di tipo Object (di un attributo indipendente) che definisce uno split
+		private Object splitValue; // valore di tipo Object (di un attributo indipendente) che definisce uno split
 		// NOTE: valore descrittivo del nodo (Stringa,
-		int beginIndex; // indice che identifica il sotto-insieme di
+		private int beginIndex; // indice che identifica il sotto-insieme di
 		// training coperto dal nodo corrente
-		int endIndex; // indice che identifica il sotto-insieme di
+		private int endIndex; // indice che identifica il sotto-insieme di
 		// training coperto dal nodo corrente
-		int numberChild; // numero di split (nodi figli) originanti dal nodo corrente
-		String comparator = "="; // operatore matematico che definisce il test nel nodo
+		private int numberChild; // numero di split (nodi figli) originanti dal nodo corrente
+		private String comparator = "="; // operatore matematico che definisce il test nel nodo
 		// corrente ("=" per valori discreti)
 
 		/**

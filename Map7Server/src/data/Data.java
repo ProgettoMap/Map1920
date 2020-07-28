@@ -20,81 +20,85 @@ import database.TableData;
 import database.TableSchema;
 
 /**
- * Modella l'insieme di esempi di apprendimento
+ * Classe che modella l'insieme di esempi di apprendimento
  */
 @SuppressWarnings("serial")
 public class Data implements Serializable {
 
-	private List<Example> data = new ArrayList<Example>(); // Modificato da es. 6
+	private List<Example> data = new ArrayList<Example>();
 
-	private int numberOfExamples; // Cardinalita'  del training set
+	private int numberOfExamples; // Cardinalita' del training set
 
 	// NOTE: E' la riga letta nel traning set nel formato Attribute es motor
 	// A,B,C,D,E
 	private List<Attribute> explanatorySet = new LinkedList<Attribute>(); // Array di oggetti di tipo Attribute per
 																			// rappresentare gli attributi
-	// indipendenti di tipo discreto
+																			// indipendenti di tipo discreto
 
 	private ContinuousAttribute classAttribute; // Oggetto per modellare l'attributo di classe ContinuousAttribute
 
-	// private Object data[][]; // Matrice nXm di tipo Object che contiene il
-	// training set organizzato come numberOfExamples X numberAttribute
-
+	/**
+	 * @param tableName Nome della tabella del database
+	 * @throws TrainingDataException Eccezione generata da acquisizione errata da database
+	 */
 	public Data(String tableName) throws TrainingDataException {
 
 		DbAccess db = new DbAccess();
 		TableData td = new TableData(db);
 		try {
 			db.initConnection();
-		Connection conn = db.getConnection();
-		Statement s = null;
-		try {
-			s = conn.createStatement(); // Controllo se esiste la tabella...
-			ResultSet r = s.executeQuery("SHOW TABLES LIKE '" + tableName + "'");
-			if (r.next() == false) {
-				throw new TrainingDataException("[!] Error [!] The table '" + tableName + "' doesn't exist.");
-			}
-
-			TableSchema ts = new TableSchema(db, tableName);
-
-			// Controlliamo se il target è un valore numerico
-			if (!ts.getColumn(ts.getNumberOfAttributes() - 1).isNumber()) {
-				throw new TrainingDataException(
-						"[!] Error [!] The column that contains the class attribute isn't a numeric type.");
-			}
-
-			short iAttribute = 0;
-			Iterator<Column> iter = ts.iterator();
-			while (iter.hasNext()) {
-				Column c = iter.next();
-				if (c.isString()) { // Attributi discreti
-					Set<String> discreteValues = td.getDistinctColumnValues(tableName, c);
-					explanatorySet.add(iAttribute,
-							new DiscreteAttribute(c.getColumnName(), iAttribute, discreteValues));
-				} else if (!isClassAttributeType(c) && c.isNumber()) { // Attributo continuo
-					explanatorySet.add(iAttribute, new ContinuousAttribute(c.getColumnName(), iAttribute));
-				} else { // Attributo di classe
-					classAttribute = new ContinuousAttribute(c.getColumnName(), iAttribute);
-				}
-				iAttribute++;
-			}
+			Connection conn = db.getConnection();
+			Statement s = null;
 			try {
-				data = td.getTransazioni(tableName);
-				numberOfExamples = data.size();
-			} catch (EmptySetException e) {
-				new TrainingDataException("[!] Errore! [!] Errore nel training set: " + e);
+				s = conn.createStatement(); // Controllo se esiste la tabella...
+				ResultSet r = s.executeQuery("SHOW TABLES LIKE '" + tableName + "'");
+				if (r.next() == false) {
+					throw new TrainingDataException("The table '" + tableName + "' doesn't exist.");
+				}
+
+				TableSchema ts = new TableSchema(db, tableName);
+
+				// Controlliamo se il target è un valore numerico
+				if (!ts.getColumn(ts.getNumberOfAttributes() - 1).isNumber()) {
+					throw new TrainingDataException(
+							"The column that contains the class attribute isn't a numeric type.");
+				}
+
+				short iAttribute = 0;
+				Iterator<Column> iter = ts.iterator();
+				while (iter.hasNext()) {
+					// Finchè la tabella ha righe
+					Column c = iter.next();
+					if (c.isString()) { // Se la colonna analizzata è di tipo discreto..
+						Set<String> discreteValues = td.getDistinctColumnValues(tableName, c);
+						explanatorySet.add(iAttribute,
+								new DiscreteAttribute(c.getColumnName(), iAttribute, discreteValues));
+					} else if (!isClassAttributeType(c) && c.isNumber()) { // .. altrimenti se è di tipo continuo..
+						explanatorySet.add(iAttribute, new ContinuousAttribute(c.getColumnName(), iAttribute));
+					} else { // .. altrimenti è l'attributo di classe
+						classAttribute = new ContinuousAttribute(c.getColumnName(), iAttribute);
+					}
+					iAttribute++;
+				}
+
+				try {
+					data = td.getTransazioni(tableName);
+				} catch (EmptySetException e) {
+					new TrainingDataException("The query has returned a result set of 0 rows. Detail error: " + e);
 				} finally {
-					 db.closeConnection();
+					db.closeConnection();
+				}
+				numberOfExamples = data.size();
+
+			} catch (SQLException e) {
+				throw new TrainingDataException("The query specified isn't correct.\nDetail error: " + e);
 			}
-		} catch (SQLException e) {
-			throw new TrainingDataException("[!] Errore! [!] La query specificata non è corretta.\nErrore: " + e);
-			}
-		} catch (DatabaseConnectionException e) {
-			System.out.println(e);
+		} catch (DatabaseConnectionException e) { 	// Viene scatenata una eccezione di tipo DatabaseConnectionException
+													// se non è possibile creare una connessione con il database server
+			System.err.println(e);
 			// Viene sollevata una eccezione di tipo TrainingDataException se la connessione
 			// al database fallisce
-			throw new TrainingDataException(
-					"[!] Error [!] Cannot create a connection with the database. Detail error: " + e);
+			throw new TrainingDataException("Cannot create a connection with the database. Detail error: " + e);
 		}
 	}
 
@@ -136,7 +140,7 @@ public class Data implements Serializable {
 	/**
 	 * Restituisce il valore dell'attributo indicizzato da attributeIndex per
 	 * l'esempio exampleIndex
-	 * 
+	 *
 	 * @param exampleIndex   int indice di riga per la matrice data[][] per uno
 	 *                       specifico esempio
 	 * @param attributeIndex indice dell'attributo nel training set
