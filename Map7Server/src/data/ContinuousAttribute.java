@@ -3,7 +3,8 @@ package data;
 import java.io.Serializable;
 
 /**
- * Estende la classe Attribute e rappresenta un attributo continuo
+ * Classe che modella un attributo continuo.
+ * Estende la classe Atribute
  *
  */
 //NOTE: Attributi numerici (es. 1,3,5...)
@@ -13,7 +14,7 @@ public class ContinuousAttribute extends Attribute implements Serializable {
 	/**
 	 * Invoca il costruttore della super-classe
 	 *
-	 * @param name Nome dell'attributo
+	 * @param name  Nome dell'attributo
 	 * @param index Indice dell'attributo
 	 */
 	public ContinuousAttribute(String name, int index) {

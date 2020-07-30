@@ -5,16 +5,23 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Modella una transazione letta dalla base di dati.
+ * Classe che modella una transazione letta dal database.
  */
 public class Example implements Comparable<Example>, Iterable<Object> {
 
 	private List<Object> example = new ArrayList<Object>();
 
-	public void add(Object o) {
+	/**
+	 * @param o Instanza di Object da aggiungere all'ArrayList
+	 */
+	void add(Object o) {
 		example.add(o);
 	}
 
+	/**
+	 * @param i Indice dell'elemento nell'ArrayList
+	 * @return Elemento nella posizione i nell'ArrayList
+	 */
 	public Object get(int i) {
 		return example.get(i);
 	}
@@ -27,7 +34,8 @@ public class Example implements Comparable<Example>, Iterable<Object> {
 													// Per quanto riguarda il warning 'unchecked' invece, siamo sicuri
 													// di passare alle funzioni i tipi corretti (in questo caso, Object).
 	@Override
-	public int compareTo(Example ex) {
+	public
+	int compareTo(Example ex) {
 		int i = 0;
 		for (Object o : ex.example) {
 			if (!o.equals(this.example.get(i))) {
@@ -51,7 +59,11 @@ public class Example implements Comparable<Example>, Iterable<Object> {
 		return null;
 	}
 
-	// TODO: chiedere se va bene
+	// Metodo implementato per inserire un oggetto all'interno dell'arrayList
+	/**
+	 * @param k - Indice dell'arraylist nella quale si vuole inserire / rimpiazzare l'oggetto
+	 * @param o - Oggetto da inserire all'interno dell'arrayList
+	 */
 	public void set(int k, Object o) {
 		example.set(k, o);
 	}

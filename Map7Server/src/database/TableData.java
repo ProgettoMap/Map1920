@@ -8,10 +8,18 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ *
+ * Classe che modella la tabella di un database
+ *
+ */
 public class TableData {
 
 	private DbAccess db;
 
+	/**
+	 * @param db Gestore database
+	 */
 	public TableData(DbAccess db) {
 		this.db = db;
 	}
@@ -90,7 +98,6 @@ public class TableData {
 	 * @throws SQLException Viene scatenata un'eccezione quando la query non viene
 	 *                      eseguita correttamente, la tabella non è presente, la
 	 *                      query presenta un errore di sintassi.
-	 * @checked
 	 */
 	// E' stato modificato il tipo del valore di ritorno da Set<Object> a
 	// Set<String>

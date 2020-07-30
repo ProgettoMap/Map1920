@@ -4,6 +4,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ *
+ * Classe che modella l'accesso al database
+ *
+ */
 public class DbAccess {
 
 	private final String DRIVER_CLASS_NAME = "com.mysql.cj.jdbc.Driver"; // (Per utilizzare questo Driver scaricare e
@@ -18,10 +23,17 @@ public class DbAccess {
 	private String PASSWORD = "map"; // contiene la password di autenticazione per l’utente identificato da USER_ID
 	private Connection conn; // gestisce una connessione
 
+	/**
+	 * Costruttore di classe
+	 */
 	public DbAccess() {
 		// Empty constructor
 	}
 
+	/**
+	 * Inizializza la connessione con il database
+	 * @throws DatabaseConnectionException Eccezione scatenata nel caso in cui non è possibile stabilire la connessione con il database
+	 */
 	public void initConnection() throws DatabaseConnectionException {
 		try {
 			Class.forName(DRIVER_CLASS_NAME).newInstance();
@@ -56,10 +68,13 @@ public class DbAccess {
 		return conn;
 	}
 
-
-
+	/**
+	 * Chiude la connessione al database
+	 * @throws SQLException Eccezione scatenata nel caso in cui non sia possibile comunicare con il database, o nel caso in cui la query di chiusura fallisca.
+	 */
 	public void closeConnection() throws SQLException{
-		conn.close();
+		if(!conn.isClosed())
+			conn.close();
 	}
 
 }

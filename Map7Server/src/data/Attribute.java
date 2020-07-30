@@ -3,7 +3,7 @@ package data;
 import java.io.Serializable;
 
 /**
- * La classe modella un generico attributo discreto o continuo.
+ * Classe che modella un attributo discreto o continuo.
  *
  */
 @SuppressWarnings("serial")
@@ -15,10 +15,10 @@ public abstract class Attribute implements Serializable {
 	/**
 	 * E' il costruttore di classe. Inizializza i valori dei membri name, index
 	 *
-	 * @param name
-	 * @param index
+	 * @param name - Nome dell'attributo
+	 * @param index - Indice all'interno del training set
 	 */
-	Attribute(String name, int index) {
+	public Attribute(String name, int index) {
 
 		this.index = index;
 		this.name = name;

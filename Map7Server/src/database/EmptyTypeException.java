@@ -1,10 +1,13 @@
 package database;
 
+/** Gestisce l'eccezione di tipo vuoto */
 @SuppressWarnings("serial")
-public class EmptyTypeException extends Exception {
+class EmptyTypeException extends Exception {
 
-	public EmptyTypeException() { }
+	@SuppressWarnings("javadoc")
+	EmptyTypeException() { }
 
-	public EmptyTypeException(String arg0) { super(arg0); }
+	@SuppressWarnings("javadoc")
+	EmptyTypeException(String arg0) { super(arg0); }
 
 }

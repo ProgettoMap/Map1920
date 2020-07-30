@@ -4,11 +4,21 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+/** Classe che inizializza la connessione del server con ogni client */
 public class MultiServer {
 
 	private int PORT = 8080;
 	private ServerSocket srvSck;
 
+	/**
+	 * Contatore delle connessioni su server
+	 */
+	static int connectionCount = 0;
+
+	/**
+	 * @param port Porta sulla quale inizializzare la connessione del server
+	 * @throws IOException Viene lanciata un'eccezione di tipo IOException se la porta è già stata utilizzata
+	 */
 	public MultiServer(int port) throws IOException {
 		if (port != PORT) { // La assegno solo se differente dalla default
 			this.PORT = port;
@@ -25,31 +35,31 @@ public class MultiServer {
 	 */
 	private void run() throws IOException {
 
-		int nThread = 0;
 		srvSck = new ServerSocket(PORT);
 
-		if (nThread == 0) {
-			System.out.println("Waiting for a connection...");
-		}
+		try {
+			while (true) {
+				if (connectionCount == 0) {
+					System.out.println("Waiting for a new connection...");
+				}
+				Socket socket = srvSck.accept();
+				// Client connesso
+				System.out.println(
+						"\n New client has started the connection. Clients actually connected: " + ++connectionCount + "\n");
 
-		while (true) {
-			try {
-		Socket socket = srvSck.accept();
-			
-		nThread++;
-			
-		System.out.println("New client has started the connection. Clients actually connected: " + nThread);
-			
-
-					ServerSocket srvSck = new ServerSocket(PORT);
-					try {
+				try {
 					new ServerOneClient(socket);
-					} catch (IOException e) {
-						// Se fallisce chiude il socket,
-						// altrimenti il thread la chiuderà:
-						socket.close();
-					}	finally {
-						srvSck.close();
-					}
-				}	catch (IOException e) { 
-}}}}
+				} catch (IOException e) {
+					// Se prima dell'esecuzione del run viene scatenata un'eccezione, verrà gestita
+					// dal seguente blocco
+					socket.close();
+					System.out.println(
+							"A client has terminated the connection. Clients actually connected: " + --connectionCount  + "\n\n");
+				}
+			}
+		} finally {
+			srvSck.close();
+		}
+	}
+
+}

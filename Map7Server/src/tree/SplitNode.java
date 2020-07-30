@@ -7,17 +7,19 @@ import java.util.List;
 import data.Attribute;
 import data.Data;
 
+/** Classe che modella l'entità nodo non fogliare */
 @SuppressWarnings("serial")
 abstract class SplitNode extends Node implements Comparable<SplitNode>, Serializable {
 
 	// NOTE: uno splitNode ha più splitInfo
 
-	Attribute attribute; // oggetto Attribute che modella l'attributo indipendente sul quale lo split è
+	private Attribute attribute; // oggetto Attribute che modella l'attributo indipendente sul quale lo split è
 	// generato
-	List<SplitInfo> mapSplit = new ArrayList<SplitInfo>(); // array per memorizzare gli split candidati in una struttura
-															// dati di dimensione
+	/**
+	 * Array per memorizzare gli split candidati in una struttura dati di dimensione
+	 */
+	List<SplitInfo> mapSplit = new ArrayList<SplitInfo>();
 	// pari ai possibili valori di test
-	// TODO: aggiustare visibilità
 	private double splitVariance; // attributo che contiene il valore di varianza a seguito del partizionamento
 	// indotto dallo split corrente
 
@@ -33,10 +35,14 @@ abstract class SplitNode extends Node implements Comparable<SplitNode>, Serializ
 	 * calcolati su ciascuno SplitInfo collezionati in mapSplit)
 	 *
 	 *
-	 * @param Data      trainingSet
-	 * @param int       beginExampleIndex
-	 * @param int       endExampleIndex
-	 * @param Attribute attribute
+	 * @param trainingSet - oggetto di classe Data contenente il training set
+	 *             completo
+	 * @param beginExampleIndex - indice che identifica il sotto-insieme di
+	 *             training coperto dal nodo corrente
+	 * @param endExampleIndex - indice che identifica il sotto-insieme di
+	 *             training coperto dal nodo corrente
+	 * @param attribute - Attributo indipendente sul quale si definisce lo split
+	 *
 	 */
 	SplitNode(Data trainingSet, int beginExampleIndex, int endExampleIndex, Attribute attribute) {
 
@@ -49,8 +55,8 @@ abstract class SplitNode extends Node implements Comparable<SplitNode>, Serializ
 		splitVariance = 0;
 		for (int i = 0; i < mapSplit.size(); i++) {
 
-			double localVariance = new LeafNode(trainingSet, mapSplit.get(i).getBeginindex(), mapSplit.get(i).getEndIndex())
-					.getVariance();
+			double localVariance = new LeafNode(trainingSet, mapSplit.get(i).getBeginindex(),
+					mapSplit.get(i).getEndIndex()).getVariance();
 			splitVariance += (localVariance);
 
 		}
@@ -63,12 +69,12 @@ abstract class SplitNode extends Node implements Comparable<SplitNode>, Serializ
 	 * Metodo abstract per generare le informazioni necessarie per ciascuno degli
 	 * split candidati (in mapSplit[])
 	 *
-	 * @param Data      trainingSet
-	 * @param int       beginExampleIndex - indici estremi del sotto-insieme di
+	 * @param trainingSet - oggetti di esempio
+	 * @param beginExampleIndex - indici estremi del sotto-insieme di
 	 *                  training
-	 * @param int       endExampleIndex - indici estremi del sotto-insieme di
+	 * @param endExampleIndex - indici estremi del sotto-insieme di
 	 *                  training
-	 * @param Attribute attribute - attributo indipendente sul quale si definisce lo
+	 * @param attribute - attributo indipendente sul quale si definisce lo
 	 *                  split
 	 */
 	abstract void setSplitInfo(Data trainingSet, int beginExampleIndex, int endExampleIndex, Attribute attribute);
@@ -81,7 +87,7 @@ abstract class SplitNode extends Node implements Comparable<SplitNode>, Serializ
 	 * Restituisce l'identificativo dello split (indice della posizione nell’array
 	 * mapSplit) con cui il test è positivo
 	 *
-	 * @param Object value - Valore discreto dell'attributo che si vuole testare
+	 * @param value - Valore discreto dell'attributo che si vuole testare
 	 *               rispetto a tutti gli split
 	 * @return int - Identificativo del ramo di split
 	 */
@@ -121,7 +127,7 @@ abstract class SplitNode extends Node implements Comparable<SplitNode>, Serializ
 	/**
 	 * Restituisce le informazioni per il ramo in mapSplit[] indicizzato da child.
 	 *
-	 * @param int child - numero di figlio di un ramo di Split
+	 * @param child - numero di figlio di un ramo di Split
 	 * @return SplitInfo - oggetto contenente le informazioni relative al nodo di
 	 *         tipo SplitNode
 	 */
@@ -165,10 +171,14 @@ abstract class SplitNode extends Node implements Comparable<SplitNode>, Serializ
 		return v;
 	}
 
+	@Override
+	public int compareTo(SplitNode o) {
+		return ((Double) this.getVariance()).compareTo(o.getVariance());
+	}
+
 	/*
 	 * Esempi di splitnode: X1, X2...
 	 */
-	// Classe che aggrega tutte le informazioni riguardanti un nodo di split
 	/*
 	 * NOTE: E' la descrizione della variabile indipendente (es. X1, X2)
 	 *
@@ -178,28 +188,33 @@ abstract class SplitNode extends Node implements Comparable<SplitNode>, Serializ
 	 * A,B,C,D,E Descrizione: pgain | Valori: 3,4,5,6 Descrizione: vgain | Valori:
 	 * 1,2,3,4,5
 	 */
+	/**
+	 *
+	 * Classe che aggrega tutte le informazioni riguardanti un nodo di split
+	 *
+	 */
 	class SplitInfo implements Serializable {
 
-		Object splitValue; // valore di tipo Object (di un attributo indipendente) che definisce uno split
+		private Object splitValue; // valore di tipo Object (di un attributo indipendente) che definisce uno split
 		// NOTE: valore descrittivo del nodo (Stringa,
-		int beginIndex; // indice che identifica il sotto-insieme di
+		private int beginIndex; // indice che identifica il sotto-insieme di
 		// training coperto dal nodo corrente
-		int endIndex; // indice che identifica il sotto-insieme di
+		private int endIndex; // indice che identifica il sotto-insieme di
 		// training coperto dal nodo corrente
-		int numberChild; // numero di split (nodi figli) originanti dal nodo corrente
-		String comparator = "="; // operatore matematico che definisce il test nel nodo
+		private int numberChild; // numero di split (nodi figli) originanti dal nodo corrente
+		private String comparator = "="; // operatore matematico che definisce il test nel nodo
 		// corrente ("=" per valori discreti)
 
 		/**
 		 * Costruttore che avvalora gli attributi di classe per split a valori discreti
 		 *
-		 * @param Object splitValue - valore di tipo Object (di un attributo
+		 * @param splitValue - valore di tipo Object (di un attributo
 		 *               indipendente) che definisce uno split
-		 * @param int    beginIndex -indice che identifica il sotto-insieme di training
+		 * @param beginIndex -indice che identifica il sotto-insieme di training
 		 *               coperto dal nodo corrente
-		 * @param int    endIndex - indice che identifica il sotto-insieme di training
+		 * @param endIndex - indice che identifica il sotto-insieme di training
 		 *               coperto dal nodo corrente
-		 * @param int    numberChild - numero di split (nodi figli) originanti dal nodo
+		 * @param numberChild - numero di split (nodi figli) originanti dal nodo
 		 *               corrente
 		 */
 		SplitInfo(Object splitValue, int beginIndex, int endIndex, int numberChild) {
@@ -214,15 +229,15 @@ abstract class SplitNode extends Node implements Comparable<SplitNode>, Serializ
 		 * Costruttore che avvalora gli attributi di classe per generici split (da usare
 		 * per valori continui)
 		 *
-		 * @param Object splitValue - valore di tipo Object (di un attributo
+		 * @param splitValue - valore di tipo Object (di un attributo
 		 *               indipendente) che definisce uno split
-		 * @param int    beginIndex -indice che identifica il sotto-insieme di training
+		 * @param beginIndex -indice che identifica il sotto-insieme di training
 		 *               coperto dal nodo corrente
-		 * @param int    endIndex - indice che identifica il sotto-insieme di training
+		 * @param endIndex - indice che identifica il sotto-insieme di training
 		 *               coperto dal nodo corrente
-		 * @param int    numberChild - numero di split (nodi figli) originanti dal
+		 * @param numberChild - numero di split (nodi figli) originanti dal
 		 *               nodocorrente
-		 * @param String comparator - operatore matematico che definisce il test nel
+		 * @param comparator - operatore matematico che definisce il test nel
 		 *               nodo corrente ("=" per valori discreti)
 		 */
 		SplitInfo(Object splitValue, int beginIndex, int endIndex, int numberChild, String comparator) {

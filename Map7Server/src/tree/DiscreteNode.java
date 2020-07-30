@@ -6,9 +6,7 @@ import java.util.ArrayList;
 import data.Attribute;
 import data.Data;
 
-/**
- * Entità nodo di split relativo ad un attributo indipendente discreto
- */
+/** Classe che modella il nodo di split relativo ad un attributo indipendente discreto */
 @SuppressWarnings("serial")
 class DiscreteNode extends SplitNode implements Serializable {
 
@@ -17,14 +15,12 @@ class DiscreteNode extends SplitNode implements Serializable {
 	 * Istanzia un oggetto invocando il costruttore della superclasse con il
 	 * parametro attribute
 	 *
-	 * @param Data      trainingSet - oggetto di classe Data contenente il training
-	 *                  set completo
-	 * @param int       beginExampleIndex - Indice estremo del sotto-insieme di
-	 *                  training
-	 * @param int       endExampleIndex - Indice estremo del sotto-insieme di
-	 *                  training
-	 * @param Attribute attribute - Attributo indipendente sul quale si definisce lo
-	 *                  split
+	 * @param trainingSet       - oggetto di classe Data contenente il training set
+	 *                          completo
+	 * @param beginExampleIndex - Indice estremo del sotto-insieme di training
+	 * @param endExampleIndex   - Indice estremo del sotto-insieme di training
+	 * @param attribute         - Attributo indipendente sul quale si definisce lo
+	 *                          split
 	 */
 	public DiscreteNode(Data trainingSet, int beginExampleIndex, int endExampleIndex, Attribute attribute) {
 		super(trainingSet, beginExampleIndex, endExampleIndex, attribute);
@@ -37,20 +33,18 @@ class DiscreteNode extends SplitNode implements Serializable {
 	 * porzione di trainingSet compresa tra beginExampleIndex e endExampleIndex),
 	 * quindi popola l'array mapSplit[] con tali oggetti
 	 *
-	 * @param Data      trainingSet - oggetto di classe Data contenente il training
-	 *                  set completo
-	 * @param int       beginExampleIndex - indice che identifica il sotto-insieme
-	 *                  di training coperto dal nodo corrente
-	 * @param int       endExampleIndex - indice che identifica il sotto-insieme di
-	 *                  training coperto dal nodo corrente
-	 * @param Attribute attribute - Attributo indipendente sul quale si definisce lo
-	 *                  split
+	 * @param trainingSet       - oggetto di classe Data contenente il training set
+	 *                          completo
+	 * @param beginExampleIndex - indice che identifica il sotto-insieme di training
+	 *                          coperto dal nodo corrente
+	 * @param endExampleIndex   - indice che identifica il sotto-insieme di training
+	 *                          coperto dal nodo corrente
+	 * @param attribute         - Attributo indipendente sul quale si definisce lo
+	 *                          split
 	 *
 	 */
 	@Override
 	void setSplitInfo(Data trainingSet, int beginExampleIndex, int endExampleIndex, Attribute attribute) {
-
-		// TODO: Fare i cast di attribute in DiscreteAttribute
 
 		// numberOfSplit non viene più utilizzato in quanto adesso utilizziamo una lista
 		// di stringhe che non può avere dimensione fissa
@@ -78,19 +72,6 @@ class DiscreteNode extends SplitNode implements Serializable {
 
 	}
 
-	/*
-	 * non viene più utilizzato per via della lista di dimensioni variabili private
-	 * int getNumberOfSplit(Data trainingSet, int beginExampleIndex, int
-	 * endExampleIndex, Attribute attribute) {
-	 *
-	 * int numberOfSplit = 0; Object splitValue = null; Object explanatoryValue =
-	 * null; for (int i = beginExampleIndex; i < endExampleIndex; i++) {
-	 * explanatoryValue = trainingSet.getExplanatoryValue(i, attribute.getIndex());
-	 * if (!explanatoryValue.equals(splitValue)) { splitValue =
-	 * trainingSet.getExplanatoryValue(i, attribute.getIndex()); numberOfSplit++; }
-	 * } return numberOfSplit; }
-	 */
-
 	/**
 	 * (Implementazione da class abstract): effettua il confronto del valore in
 	 * input rispetto al valore contenuto nell’attributo splitValue di ciascuno
@@ -98,15 +79,14 @@ class DiscreteNode extends SplitNode implements Serializable {
 	 * l'identificativo dello split (indice della posizione nell’array mapSplit) con
 	 * cui il test è positivo
 	 *
-	 * @param Object value - valore discreto dell'attributo che si vuole testare
-	 *               rispetto a tutti gli split
+	 * @param value - valore discreto dell'attributo che si vuole testare rispetto a
+	 *              tutti gli split
 	 * @return int branchNumber - Identificativo dello split (indice della posizione
 	 *         nell’array mapSplit)
 	 *
 	 */
 	@Override
 	int testCondition(Object value) {
-		//TODO: perchè non viene mai utilizzato?
 
 		String valueStr = (String) value;
 		int k = 0;
@@ -127,14 +107,12 @@ class DiscreteNode extends SplitNode implements Serializable {
 	}
 
 	/**
-	 *  Confronta i valori di splitVariance dei due nodi, restituendone l'esito.
-	 *  0  : valori di gain uguali;
-	 *  -1 : valore di gain minore
-	 *  1  : valore di gain maggiore
+	 * Confronta i valori di splitVariance dei due nodi, restituendone l'esito. 0 :
+	 * valori di gain uguali; -1 : valore di gain minore 1 : valore di gain maggiore
 	 */
 	@Override
 	public int compareTo(SplitNode o) {
-		return ((Double)this.getVariance()).compareTo(o.getVariance());
+		return ((Double) this.getVariance()).compareTo(o.getVariance());
 	}
 
 }

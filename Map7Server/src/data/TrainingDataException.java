@@ -2,22 +2,23 @@ package data;
 
 
 /**
- * Gestisce le eccezioni causate da acquisizione errata del file:
+ * Gestisce le eccezioni causate da acquisizione errata dei dati.
  *
- * - File inesistente
- *
- * - Schema mancante
- *
- * - Training set vuoto
- *
- * - Training set privo di variabile target numerica
+ * Eccezioni gestite:
+ * <ul>
+ * 	<li> File inesistente </li>
+ *  <li> Schema mancante </li>
+ *  <li> Training set vuoto </li>
+ 	<li> Training set privo di variabile target numerica </li>
+ * </ul>
  */
 @SuppressWarnings("serial")
 public class TrainingDataException extends Exception {
 
-    public TrainingDataException() { }
+	@SuppressWarnings("javadoc")
+	public TrainingDataException() { }
 
-    public TrainingDataException(String message) { super(message); }
+	@SuppressWarnings("javadoc")
+	public TrainingDataException(String message) { super(message); }
 
 }
-

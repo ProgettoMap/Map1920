@@ -16,15 +16,12 @@ import data.DiscreteAttribute;
 import server.ServerOneClient;
 import server.UnknownValueException;
 
-/**
- * Entità albero di decisione come insieme di sotto-alberi
- *
- */
+/** Classe che modella l'entità albero di decisione come insieme di sotto-alberi */
 @SuppressWarnings("serial")
 public class RegressionTree implements Serializable {
 
-	Node root; // radice del sotto-albero corrente
-	RegressionTree childTree[]; // array di sotto-alberi originanti nel nodo root.
+	private Node root; // radice del sotto-albero corrente
+	private RegressionTree childTree[]; // array di sotto-alberi originanti nel nodo root.
 	// Vi è un elemento nell’array per ogni figlio del nodo
 
 	/**
@@ -37,7 +34,7 @@ public class RegressionTree implements Serializable {
 	 * Istanzia un sotto-albero dell'intero albero e avvia l'induzione dell'albero
 	 * dagli esempi di training in input
 	 *
-	 * @param trainingSet
+	 * @param trainingSet - Insieme di esempi di apprendimento
 	 */
 	public RegressionTree(Data trainingSet) {
 
@@ -45,7 +42,7 @@ public class RegressionTree implements Serializable {
 
 	}
 
-	/**
+	/*
 	 * Genera un sotto-albero con il sotto-insieme di input istanziando un nodo
 	 * fogliare (isLeaf()) o un nodo di split. In tal caso determina il miglior nodo
 	 * rispetto al sotto-insieme di input (determineBestSplitNode()), ed a tale nodo
@@ -57,16 +54,17 @@ public class RegressionTree implements Serializable {
 	 * split non origina figli, il nodo diventa fogliare.
 	 *
 	 *
-	 * @param Data trainingSet oggetto di classe Data contenente il training set
-	 *             completo
-	 * @param int  begin indice che identifica il sotto-insieme di training coperto
-	 *             dal nodo corrente
-	 * @param int  end indice che identifica il sotto-insieme di training coperto
-	 *             dal nodo corrente
-	 * @param int  numberOfExamplesPerLeaf Numero massimo che una foglia deve
-	 *             contenere
+	 * trainingSet - oggetto di classe Data contenente il training set completo
+	 *
+	 * begin - indice che identifica il sotto-insieme di training coperto dal nodo
+	 * corrente
+	 *
+	 * end - indice che identifica il sotto-insieme di training coperto dal nodo
+	 * corrente
+	 *
+	 * numberOfExamplesPerLeaf - Numero massimo che una foglia deve contenere
 	 */
-	void learnTree(Data trainingSet, int begin, int end, int numberOfExamplesPerLeaf) {
+	private void learnTree(Data trainingSet, int begin, int end, int numberOfExamplesPerLeaf) {
 		if (isLeaf(trainingSet, begin, end, numberOfExamplesPerLeaf)) {
 			// determina la classe che compare più frequentemente nella partizione corrente
 			root = new LeafNode(trainingSet, begin, end);
@@ -79,8 +77,8 @@ public class RegressionTree implements Serializable {
 				for (int i = 0; i < root.getNumberOfChildren(); i++) {
 					childTree[i] = new RegressionTree();
 
-					int beginIndex = ((SplitNode) root).getSplitInfo(i).beginIndex;
-					int endIndex = ((SplitNode) root).getSplitInfo(i).endIndex;
+					int beginIndex = ((SplitNode) root).getSplitInfo(i).getBeginindex();
+					int endIndex = ((SplitNode) root).getSplitInfo(i).getEndIndex();
 
 					childTree[i].learnTree(trainingSet, beginIndex, endIndex, numberOfExamplesPerLeaf);
 				}
@@ -90,7 +88,7 @@ public class RegressionTree implements Serializable {
 		}
 	}
 
-	/**
+	/*
 	 * Per ciascun attributo indipendente istanzia il DiscreteNode associato e
 	 * seleziona il nodo di split con minore varianza tra i DiscreteNode istanziati.
 	 *
@@ -99,12 +97,15 @@ public class RegressionTree implements Serializable {
 	 *
 	 * Restituisce il nodo selezionato.
 	 *
-	 * @param Data  - oggetto di classe Data contenente il training set completo
-	 * @param begin - indice che identifica il sotto-insieme di training coperto dal
-	 *              nodo corrente
-	 * @param end   - indice che identifica il sotto-insieme di training coperto dal
-	 *              nodo corrente
-	 * @return SplitNode - nodo di split migliore per il sotto-insieme di training
+	 * trainingSet - oggetto di classe Data contenente il training set completo
+	 *
+	 * begin - indice che identifica il sotto-insieme di training coperto dal nodo
+	 * corrente
+	 *
+	 * end - indice che identifica il sotto-insieme di training coperto dal nodo
+	 * corrente
+	 *
+	 * SplitNode - nodo di split migliore per il sotto-insieme di training
 	 */
 	private SplitNode determineBestSplitNode(Data trainingSet, int begin, int end) {
 
@@ -128,11 +129,11 @@ public class RegressionTree implements Serializable {
 		return ts.first();
 	}
 
-/**
- * Stampa le informazioni dell'intero albero (compresa una intestazione)
- *
- * @param out flusso di
- */
+	/**
+	 * Stampa le informazioni dell'intero albero (compresa una intestazione)
+	 *
+	 * @param out flusso di
+	 */
 	public void printTree(ObjectOutputStream out) {
 		try {
 			out.writeObject("********* TREE **********\n");
@@ -175,15 +176,17 @@ public class RegressionTree implements Serializable {
 		}
 	}
 
-	/**
-	 * Supporta il metodo public void printRules(). Concatena alle informazioni in
-	 * current del precedente nodo quelle del nodo root del corrente sotto-albero
-	 * (oggetto DecisionTree): se il nodo corrente è di split il metodo viene
-	 * invocato ricorsivamente con current e le informazioni del nodo corrente, se è
-	 * di fogliare (leaf) visualizza tutte le informazioni concatenate.
+	/*
+	 * Supporta il metodo public void printRules().
 	 *
-	 * @param current - Informazioni del nodo di split del sotto-albero al livello
-	 *                superiore
+	 * Concatena alle informazioni in current del precedente nodo quelle del nodo
+	 * root del corrente sotto-albero (oggetto DecisionTree): se il nodo corrente è
+	 * di split il metodo viene invocato ricorsivamente con current e le
+	 * informazioni del nodo corrente, se è di fogliare (leaf) visualizza tutte le
+	 * informazioni concatenate.
+	 *
+	 * current - Informazioni del nodo di split del sotto-albero al livello
+	 * superiore
 	 */
 	private void printRules(ObjectOutputStream out, String current) {
 
@@ -193,7 +196,7 @@ public class RegressionTree implements Serializable {
 			try {
 				out.writeObject(current);
 			} catch (IOException e) {
-				// TODO:
+				System.out.println("[!] Error [!] Cannot write the tree on the client. Detail Error: " + e);
 			}
 
 		} else if (root instanceof SplitNode) {
@@ -239,7 +242,7 @@ public class RegressionTree implements Serializable {
 		return tree;
 	}
 
-	/**
+	/*
 	 * Verifica se il sotto-insieme corrente può essere coperto da un nodo foglia
 	 * controllando che il numero di esempi del training set compresi tra begin ed
 	 * end sia minore o uguale di numberOfExamplesPerLeaf.
@@ -248,18 +251,20 @@ public class RegressionTree implements Serializable {
 	 * RegressionTree dove numberOfExamplesPerLeaf è fissato al 10% della dimensione
 	 * del training set
 	 *
-	 * @param Data trainingSet - oggetto di classe Data contenente il training set
-	 *             completo
-	 * @param int  indice che identifica il sotto-insieme di training coperto dal
-	 *             nodo corrente
-	 * @param int  indice che identifica il sotto-insieme di training coperto dal
-	 *             nodo corrente
-	 * @param int  Numero minimo che una foglia deve contenere
+	 * trainingSet - oggetto di classe Data contenente il training set completo
 	 *
-	 * @return boolean - Ritorna vero se la partizione data contiene un nodo
-	 *         fogliare, falso altrimenti
+	 * begin - indice che identifica il sotto-insieme di training coperto dal nodo
+	 * corrente
+	 *
+	 * end - indice che identifica il sotto-insieme di training coperto dal nodo
+	 * corrente
+	 *
+	 * numberOfExamplesPerLeaf - Numero minimo che una foglia deve contenere
+	 *
+	 * Ritorna vero se la partizione data contiene un nodo fogliare, falso
+	 * altrimenti
 	 */
-	boolean isLeaf(Data trainingSet, int begin, int end, int numberOfExamplesPerLeaf) {
+	private boolean isLeaf(Data trainingSet, int begin, int end, int numberOfExamplesPerLeaf) {
 		return ((end - begin + 1) <= numberOfExamplesPerLeaf);
 	}
 
@@ -290,7 +295,7 @@ public class RegressionTree implements Serializable {
 			try {
 				s.getOut().writeObject("OK");
 			} catch (IOException e) {
-
+				System.err.print("[!] Error [!] There was a problem with the input/output. Detail error: " + e);
 			}
 			return ((LeafNode) root).getPredictedClassValue();
 		} else {
@@ -299,25 +304,30 @@ public class RegressionTree implements Serializable {
 			try {
 				s.getOut().writeObject("QUERY");
 			} catch (IOException e) {
-
+				System.err.print("[!] Error [!] There was a problem with the input/output. Detail error: " + e);
 			}
 			try {
 				s.getOut().writeObject(((SplitNode) root).formulateQuery());
-			} catch (IOException e1) {
-
+			} catch (IOException e) {
+				System.err.print("[!] Error [!] There was a problem with the input/output. Detail error: " + e);
 			}
 			try {
 				risp = ((int) s.getIn().readObject());
 			} catch (ClassNotFoundException e) {
 
 			} catch (IOException e) {
-
+				System.err.print("[!] Error [!] There was a problem with the input/output. Detail error: " + e);
 			}
 
-			if (risp < 0 || risp >= root.getNumberOfChildren())
-				throw new UnknownValueException( // TODO: Passare eccezione al client!
-						"The answer should be an integer between 0 and " + (root.getNumberOfChildren() - 1) + "!");
-			else
+			if (risp < 0 || risp >= root.getNumberOfChildren()) {
+				try {
+					s.getOut().writeObject("!ERROR! The answer should be an integer between 0 and "
+							+ (root.getNumberOfChildren() - 1) + "!");
+				} catch (IOException e) {
+					System.err.print("[!] Error [!] There was a problem with the input/output. Detail error: " + e);
+				}
+				throw new UnknownValueException();
+			} else
 				return childTree[risp].predictClass(s);
 		}
 	}
