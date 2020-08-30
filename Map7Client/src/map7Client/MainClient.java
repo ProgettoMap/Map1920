@@ -9,7 +9,7 @@ import java.net.UnknownHostException;
 
 import utility.Keyboard;
 /**
- * 
+ *
  * Main del client
  *
  */
@@ -59,14 +59,17 @@ public class MainClient {
 		String answer = "";
 
 		int decision = 0;
+		System.out.println(" MENU ");
+		System.out.println(" - Learn Regression Tree from data [1]");
+		System.out.println(" - Load Regression Tree from archive [2]");
 		do {
-			System.out.println(" - Learn Regression Tree from data [1]");
-			System.out.println(" - Load Regression Tree from archive [2]");
+			System.out.print("-> ");
 			decision = Keyboard.readInt();
 		} while (!(decision == 1) && !(decision == 2));
 
 
-		System.out.println("Table name:");
+		System.out.println("Table/file name:");
+		System.out.print("-> ");
 		String tableName = Keyboard.readString();
 		try {
 			if (decision == 1) { // Learn regression tree
@@ -88,11 +91,17 @@ public class MainClient {
 			}
 
 			while (!(answer = in.readObject().toString()).equals("FINISH")) {
-				System.out.println(answer); // Reading rules
+				if(answer.toLowerCase().contains("error"))
+					System.err.println(answer);
+				else
+					System.out.println(answer); // Reading rules
 			}
 
 			while (!(answer = in.readObject().toString()).equals("FINISH")) {
-				System.out.println(answer); // Reading tree
+				if(answer.toLowerCase().contains("error"))
+					System.err.println(answer);
+				else
+					System.out.println(answer); // Reading rules
 			}
 
 			answer = in.readObject().toString();
@@ -111,6 +120,7 @@ public class MainClient {
 					// Formulating query, reading answer
 					answer = in.readObject().toString(); // Read trees
 					System.out.println(answer);
+					System.out.print("-> ");
 					int path = Keyboard.readInt();
 					out.writeObject(path);
 					answer = in.readObject().toString();
@@ -119,27 +129,31 @@ public class MainClient {
 				if (answer.equals("OK")) { // Reading prediction
 					answer = in.readObject().toString();
 					System.out.println("Predicted class:" + answer);
-
 				} else // Printing error message
 					System.err.println(answer);
 
-				System.out.println("Would you repeat ? (y/n)");
-				risp = Keyboard.readChar();
+				do {
+					System.out.println("Do you want to repeat? (y/n)");
+					risp = Keyboard.readChar();
+				} while (Character.toUpperCase(risp) != 'Y' && Character.toUpperCase(risp) != 'N');
 
 			} while (Character.toUpperCase(risp) == 'Y');
 
 			// Aggiunta stampa per far capire al server che l'esecuzione del client vuole terminare
 			out.writeObject(0);
-			System.out.println("Thank you for having used this Regression Tree Learner! See you soon");
+			System.out.println("Thank you for having used this Regression Tree Learner! See you soon...");
 
-		} catch (IOException | ClassNotFoundException e) {
+	      } catch (IOException | ClassNotFoundException e) {
 			System.out.println(e.toString());
 		} finally {
 			try {
 				socket.close();
 			} catch (IOException e1) {
 				System.err.println("[!] Error [!] Socket has not been closed correctly.");
+
 			}
+			System.out.println("\n \n \nPress Any Key To Exit...");
+			Keyboard.nextEnter();
 		}
 	}
 

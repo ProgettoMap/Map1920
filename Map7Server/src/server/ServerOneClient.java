@@ -20,7 +20,7 @@ public class ServerOneClient extends Thread {
 	 * Costruttore di classe. Inizializza gli attributi socket, in e out. Avvia il
 	 * thread.
 	 *
-	 * @param s Socket
+	 * @param s Socket Canale di comunicazione con il client
 	 * @throws IOException quando l'input dato presenta errori
 	 */
 	public ServerOneClient(Socket s) throws IOException {
@@ -67,8 +67,10 @@ public class ServerOneClient extends Thread {
 						tree = RegressionTree.carica(in.readObject().toString() + ".dmp");
 					} catch (ClassNotFoundException | IOException e) {
 						out.writeObject(
-								"[!] Error [!] Cannot load the Regression Tree saved on the server. Are you sure that the file already exists? Detail Error: "
+								"[!] Error [!] Cannot load the Regression Tree saved on the server. \n Are you sure that the file already exists? \n Detail Error: "
 										+ e);
+						socket.close();
+						return;
 					}
 				}
 
@@ -87,7 +89,7 @@ public class ServerOneClient extends Thread {
 					try {
 						out.writeObject(tree.predictClass(this).toString());
 					} catch (UnknownValueException e) {
-						out.writeObject(e);
+						out.writeObject(e.toString());
 					}
 				}
 
@@ -110,6 +112,8 @@ public class ServerOneClient extends Thread {
 	}
 
 	/**
+	 * Restituisce il flusso di comunicazione in input
+	 *
 	 * @return Flusso di input di comunicazione con il client
 	 */
 	public ObjectInputStream getIn() {
@@ -117,7 +121,8 @@ public class ServerOneClient extends Thread {
 	}
 
 	/**
-	 * 
+	 * Restituisce il flusso di comunicazione in output
+	 *
 	 * @return Flusso di output di comunicazione con il client
 	 */
 	public ObjectOutputStream getOut() {

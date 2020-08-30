@@ -8,6 +8,7 @@
 package utility;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
@@ -19,7 +20,7 @@ public class Keyboard {
 	private static int errorCount = 0;
 
 	/**
-	 * 
+	 *
 	 * @return the current error count.
 	 */
 	static int getErrorCount() {
@@ -36,7 +37,7 @@ public class Keyboard {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return a boolean indicating whether input errors are
 	 * currently printed to standard output.
 	 */
@@ -48,7 +49,7 @@ public class Keyboard {
 	/**
 	 * Sets a boolean indicating whether input errors are to be
 	 * printed to standard output.
-	 * @param flag - boolean 
+	 * @param flag - boolean
 	 */
 	public static void setPrintErrors(boolean flag) {
 		printErrors = flag;
@@ -134,7 +135,7 @@ public class Keyboard {
 	// ************* Reading Section *********************************
 
 	/**
-	 * 
+	 *
 	 * @return a string read from standard input.
 	 */
 	public static String readString() {
@@ -154,7 +155,7 @@ public class Keyboard {
 
 
 	/**
-	 * 
+	 *
 	 * @return a space-delimited substring (a word) read from
 	 * standard input.
 	 */
@@ -171,7 +172,7 @@ public class Keyboard {
 
 
 	/**
-	 * 
+	 *
 	 * @return a boolean read from standard input.
 	 */
 	public static boolean readBoolean() {
@@ -194,7 +195,7 @@ public class Keyboard {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return a character read from standard input.
 	 */
 	public static char readChar() {
@@ -215,7 +216,7 @@ public class Keyboard {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return an integer read from standard input.
 	 */
 	public static int readInt() {
@@ -231,7 +232,7 @@ public class Keyboard {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return a long integer read from standard input.
 	 */
 	public static long readLong() {
@@ -247,7 +248,7 @@ public class Keyboard {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return a float read from standard input.
 	 */
 	public static float readFloat() {
@@ -263,7 +264,7 @@ public class Keyboard {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return a double read from standard input.
 	 */
 	public static double readDouble() {
@@ -276,5 +277,13 @@ public class Keyboard {
 			value = Double.NaN;
 		}
 		return value;
+	}
+
+	public static void nextEnter() {
+		try {
+			in.readLine();
+		} catch (IOException e) {
+			error("Can't read the input.");
+		}
 	}
 }
