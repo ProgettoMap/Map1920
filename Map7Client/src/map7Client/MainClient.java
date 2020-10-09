@@ -88,6 +88,11 @@ public class MainClient {
 			} else { // Load tree from archive
 				out.writeObject(2);
 				out.writeObject(tableName);
+				answer = in.readObject().toString();
+				if (!answer.equals("OK")) {
+					System.err.println(answer); // C'è stato qualche errore
+					return;
+				}
 			}
 
 			while (!(answer = in.readObject().toString()).equals("FINISH")) {

@@ -47,6 +47,8 @@ public class ServerOneClient extends Thread {
 						trainingSet = new Data(tableName);
 					} catch (TrainingDataException e) {
 						out.writeObject("[!] Error [!] " + e);
+						socket.close();
+						return;
 					}
 					out.writeObject("OK");
 
@@ -67,11 +69,12 @@ public class ServerOneClient extends Thread {
 						tree = RegressionTree.carica(in.readObject().toString() + ".dmp");
 					} catch (ClassNotFoundException | IOException e) {
 						out.writeObject(
-								"[!] Error [!] Cannot load the Regression Tree saved on the server. \n Are you sure that the file already exists? \n Detail Error: "
-										+ e);
-						socket.close();
-						return;
+							"[!] Error [!] Cannot load the Regression Tree saved on the server. \n Are you sure that the file already exists? \n Detail Error: "
+							+ e);
+							socket.close();
+							return;
 					}
+					out.writeObject("OK");
 				}
 
 				// Abbiamo deciso di passare come nelle esercitazioni precedenti la
