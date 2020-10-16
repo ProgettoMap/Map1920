@@ -1,6 +1,8 @@
 import java.io.IOException;
 import java.util.Scanner;
 
+
+
 import server.MultiServer;
 /**
  *
@@ -16,7 +18,7 @@ class MainServer {
 	 *
 	 * @param args Parametri passati in input al programma
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args){
 		Scanner scanner = new Scanner(System.in);
 
 		System.out.println("Regression Tree Learner\n");
@@ -31,12 +33,16 @@ class MainServer {
 						System.out.println("Insert the port on which to create the connection [1 ~ 65535]: "); //TODO: gestire caso di porta fuori range
 						isNumber = true;
 						port = Integer.parseInt(scanner.nextLine()); // E' stato deciso di leggere in input una stringa. Nel caso in cui l'utente ha inserito una stringa non convertibile in intero, viene scatenata un'eccezione
-					} catch (NumberFormatException e) {
+						if(port>0xFFFF)
+						System.err.println(
+							"[!] Error [!] The port number is higher than 65535. Please try again\n");
+
+					} catch (NumberFormatException e  ) {
 						System.err.println(
 								"[!] Error [!] The string that you've entered is not a number.");
 						isNumber = false;
 					}
-				} while ( ! isNumber );
+				} while ( ! isNumber || port>0xFFFF );
 
 				try {
 					new MultiServer(port);
