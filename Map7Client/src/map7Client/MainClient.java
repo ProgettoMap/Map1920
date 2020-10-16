@@ -28,7 +28,7 @@ public class MainClient {
 				return;
 			}
 		} else { // Numero parametri insufficiente
-			System.err.println("[!] Error [!] You haven't entered the necessary parameters for starting correctly the Regression Tree Learner.\nMind that you have to launch the program in the following mode: RegressionTreeClient.exe <ip address> <port>");
+			System.err.println("[!] Error [!] You haven't entered the necessary parameters for starting correctly the Regression Tree Learner.\nMind that you have to launch the program in the following mode: ./RegressionTreeLearner.bat <ip address> <port>");
 			return;
 		}
 
@@ -66,7 +66,6 @@ public class MainClient {
 			System.out.print("-> ");
 			decision = Keyboard.readInt();
 		} while (!(decision == 1) && !(decision == 2));
-
 
 		System.out.println("Table/file name:");
 		System.out.print("-> ");
@@ -148,17 +147,14 @@ public class MainClient {
 			out.writeObject(0);
 			System.out.println("Thank you for having used this Regression Tree Learner! See you soon...");
 
-	      } catch (IOException | ClassNotFoundException e) {
+	    } catch (IOException | ClassNotFoundException e) {
 			System.out.println(e.toString());
 		} finally {
 			try {
 				socket.close();
 			} catch (IOException e1) {
 				System.err.println("[!] Error [!] Socket has not been closed correctly.");
-
 			}
-			System.out.println("\n \n \nPress Any Key To Exit...");
-			Keyboard.nextEnter();
 		}
 	}
 

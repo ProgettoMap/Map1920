@@ -28,7 +28,7 @@ class MainServer {
 				int port = 0;
 				do {
 					try {
-						System.out.println("Insert the port on which to create the connection: ");
+						System.out.println("Insert the port on which to create the connection [1 ~ 65535]: "); //TODO: gestire caso di porta fuori range
 						isNumber = true;
 						port = Integer.parseInt(scanner.nextLine()); // E' stato deciso di leggere in input una stringa. Nel caso in cui l'utente ha inserito una stringa non convertibile in intero, viene scatenata un'eccezione
 					} catch (NumberFormatException e) {

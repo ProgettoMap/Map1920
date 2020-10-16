@@ -32,3 +32,5 @@ doc
 *.dmp
 *.dat
 .vscode
+Map7Client/RegressionTreeLearner.bat
+Map7Server/RegressionTreeLearner_server.bat

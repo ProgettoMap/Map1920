@@ -8,7 +8,6 @@
 package utility;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
@@ -279,11 +278,4 @@ public class Keyboard {
 		return value;
 	}
 
-	public static void nextEnter() {
-		try {
-			in.readLine();
-		} catch (IOException e) {
-			error("Can't read the input.");
-		}
-	}
 }
