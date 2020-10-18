@@ -21,7 +21,7 @@ class MainServer {
 	public static void main(String[] args){
 		Scanner scanner = new Scanner(System.in);
 
-		System.out.println("Regression Tree Learner\n");
+		System.out.println("Regression Tree Learner - Server\n");
 		try {
 			boolean connectionError; // Flag usato per ripetere il ciclo nel caso in cui la porta sia già in uso
 			do {
