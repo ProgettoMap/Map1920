@@ -13,7 +13,7 @@ public class MultiServer {
 	/**
 	 * Contatore delle connessioni su server
 	 */
-	static int connectionCount = 0;
+	 static int connectionCount = 0;
 
 	/**
 	 * Costruttore della classe MultiServer. Quando invocato, restituisce un oggetto istanza della classe con gli attributi valorizzati dal parametro port
