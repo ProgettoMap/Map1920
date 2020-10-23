@@ -15,8 +15,16 @@ import utility.Keyboard;
  */
 public class MainClient {
 
-	public static void main(String[] args) {
-		
+	private static Socket socket = null;
+	private static ObjectOutputStream out = null;
+	private static ObjectInputStream in = null;
+	public static void main(String[] args) {	
+
+		ShutDownTask shutDownTask = new ShutDownTask();
+		Runtime.getRuntime().addShutdownHook(shutDownTask);
+
+		System.out.println("Regression Tree Learner\n");
+
 		// Validazione parametri in input
 		if(args.length == 2) {
 			if(!args[0].matches("^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$")) { // Formato ip non valido
@@ -39,14 +47,11 @@ public class MainClient {
 			System.out.println(e.toString());
 			return;
 		}
-		Socket socket = null;
-		ObjectOutputStream out = null;
-		ObjectInputStream in = null;
+	
 		try {
-			System.out.println("Regression Tree Learner\n\n");
 			System.out.println("Trying to connect to the server " + addr + "...");
 			socket = new Socket(addr, new Integer(args[1]).intValue());
-			System.out.println(socket);
+			System.out.println(socket + "\n");
 
 			// stream con richieste del client
 			out = new ObjectOutputStream(socket.getOutputStream());
@@ -59,9 +64,9 @@ public class MainClient {
 		String answer = "";
 
 		int decision = 0;
-		System.out.println(" MENU ");
-		System.out.println(" - Learn Regression Tree from data [1]");
-		System.out.println(" - Load Regression Tree from archive [2]");
+		System.out.println("MENU ");
+		System.out.println(" - [1] Learn Regression Tree from data");
+		System.out.println(" - [2] Load Regression Tree from archive");
 		do {
 			System.out.print("-> ");
 			decision = Keyboard.readInt();
@@ -149,12 +154,25 @@ public class MainClient {
 
 	    } catch (IOException | ClassNotFoundException e) {
 			System.out.println(e.toString());
-		} finally {
-			try {
-				socket.close();
-			} catch (IOException e1) {
-				System.err.println("[!] Error [!] Socket has not been closed correctly.");
-			}
+		}
+	}
+
+	private static class ShutDownTask extends Thread {
+ 
+		@Override
+		public void run() {
+			System.out.println("Closing the socket...");
+			if (socket != null && !socket.isClosed()) {
+				try {
+					socket.close();
+					if(in != null)
+						in.close();
+					if(out != null)
+						out.close();
+				} catch (IOException e) {
+					System.err.println("[!] Error [!] Socket has not been closed correctly.");
+				}
+			} 
 		}
 	}
 
